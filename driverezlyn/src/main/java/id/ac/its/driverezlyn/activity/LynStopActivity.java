@@ -1,9 +1,12 @@
 package id.ac.its.driverezlyn.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,15 @@ public class LynStopActivity extends AppCompatActivity {
 
         LynStopRecyclerViewAdapter adapter = new LynStopRecyclerViewAdapter(getApplicationContext(), lynStops);
         rvLynStop.setAdapter(adapter);
+
+        Button peta = (Button) findViewById(R.id.button3);
+        peta.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(LynStopActivity.this,Track.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void initializeData(){

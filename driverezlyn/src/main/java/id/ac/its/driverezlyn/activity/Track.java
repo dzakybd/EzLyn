@@ -1,7 +1,13 @@
-package id.ac.its.ezlyn.activity;
+package id.ac.its.driverezlyn.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,6 +19,11 @@ import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,14 +40,20 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import id.ac.its.ezlyn.R;
+import id.ac.its.driverezlyn.R;
 
-public class Track extends AppCompatActivity implements OnMapReadyCallback{
+public class Track extends AppCompatActivity implements
+        OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     MarkerOptions markerOptions;
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     Marker angkot,halte1,halte2;
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
     DatabaseReference mFirebaseDatabase;
     FirebaseDatabase mFirebaseInstance;
     double lati,lngi;
@@ -49,7 +66,6 @@ public class Track extends AppCompatActivity implements OnMapReadyCallback{
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        //mFirebaseInstance.getReference("angkot").setValue("-7.280380,112.780960");
         mFirebaseInstance.getReference("angkot").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -85,8 +101,7 @@ public class Track extends AppCompatActivity implements OnMapReadyCallback{
         angkot = mGoogleMap.addMarker(markerOptions);
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lati,lngi)));
         if(!locsetted){
-            locsetted=true;
-            mapsetted(lati,lngi,-7.279890,112.784973);
+            locsetted=true;mapsetted(lati,lngi,-7.279890,112.784973);
         }
     }
 
@@ -122,6 +137,12 @@ public class Track extends AppCompatActivity implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap=googleMap;
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            buildGoogleApiClient();
+            mGoogleMap.setMyLocationEnabled(true);
+        }
 
         markerOptions = new MarkerOptions();
         markerOptions.position(new LatLng(-7.279890,112.784973));
@@ -137,5 +158,52 @@ public class Track extends AppCompatActivity implements OnMapReadyCallback{
 
         mapsetted(-7.279890,112.784973,-7.279337,112.789393);
     }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mFirebaseInstance.getReference("angkot").setValue(location.getLatitude()+","+location.getLongitude());
+    }
+
 
 }

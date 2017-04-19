@@ -14,17 +14,20 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.List;
 
 import id.ac.its.driverezlyn.R;
 
 public class Splashscreen extends AppCompatActivity {
+    private AVLoadingIndicatorView avi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
+        avi = (AVLoadingIndicatorView) findViewById(R.id.avi);
         Dexter.withActivity(this)
                 .withPermissions(
                         Manifest.permission.INTERNET,
@@ -35,14 +38,15 @@ public class Splashscreen extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION
                 ).withListener(new MultiplePermissionsListener() {
             @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+                avi.show();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent i = new Intent(Splashscreen.this, MainActivity.class);
+                        Intent i = new Intent(Splashscreen.this, LynStopActivity.class);
                         startActivity(i);
                         finish();
                     }
-                }, 1500);
+                }, 2000);
             }
             @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
         }).withErrorListener(new PermissionRequestErrorListener() {

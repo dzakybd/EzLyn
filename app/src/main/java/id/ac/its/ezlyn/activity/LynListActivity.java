@@ -71,10 +71,10 @@ public class LynListActivity extends AppCompatActivity {
 
     private void initializeData(){
         lyns = new ArrayList<>();
-        lyns.add(new Lyn(LynType.S,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.WK,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.O,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.S,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.O,"L 1234 A", "20 min", "Full"));
+        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.WK,"L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
     }
 }

@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity implements
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-    Marker angkot,halte1,halte2;
-    TextView text;
+    Marker halte1,halte2;
     boolean locsetted=false;
 
     @Override
