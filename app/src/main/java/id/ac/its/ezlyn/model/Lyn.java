@@ -8,10 +8,10 @@ public class Lyn {
 
     LynType type;
     private String plate;
-    private String eta;
+    private int eta;
     private String status;
 
-    public Lyn(LynType type, String plate, String eta, String status) {
+    public Lyn(LynType type, String plate, int eta, String status) {
         this.type = type;
         this.plate = plate;
         this.eta = eta;
@@ -22,31 +22,15 @@ public class Lyn {
         return plate;
     }
 
-    public void setPlate(String plate) {
-        this.plate = plate;
-    }
-
     public String getEta() {
-        return eta;
-    }
-
-    public void setEta(String eta) {
-        this.eta = eta;
+        return String.format("%s menit",eta);
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public LynType getType() {
         return type;
-    }
-
-    public void setType(LynType type) {
-        this.type = type;
     }
 }

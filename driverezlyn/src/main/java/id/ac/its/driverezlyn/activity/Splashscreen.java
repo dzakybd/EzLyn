@@ -1,4 +1,4 @@
-package id.ac.its.driverezlyn;
+package id.ac.its.driverezlyn.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.util.List;
+
+import id.ac.its.driverezlyn.R;
 
 public class Splashscreen extends AppCompatActivity {
 
