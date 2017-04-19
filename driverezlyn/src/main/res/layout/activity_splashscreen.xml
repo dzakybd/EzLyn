@@ -5,7 +5,21 @@
     android:id="@+id/activity_splashscreen"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:layout_height="match_parent"
     tools:context="id.ac.its.driverezlyn.Splashscreen">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/logo" />
+    <TextView
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimaryText"
+        android:text="EzLyn"/>
 </LinearLayout>
