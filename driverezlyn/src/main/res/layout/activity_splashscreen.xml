@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:layout_height="match_parent"
-    tools:context="id.ac.its.driverezlyn.Splashscreen">
+    tools:context="id.ac.its.driverezlyn.activity.Splashscreen">
 
     <ImageView
         android:id="@+id/imageView"

@@ -1,7 +1,7 @@
 package id.ac.its.ezlyn.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -10,9 +10,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import id.ac.its.ezlyn.model.Lyn;
 import id.ac.its.ezlyn.R;
 import id.ac.its.ezlyn.adapter.LynRecyclerViewAdapter;
+import id.ac.its.ezlyn.model.Lyn;
 import id.ac.its.ezlyn.model.LynType;
 
 public class LynListActivity extends AppCompatActivity {
@@ -38,12 +38,12 @@ public class LynListActivity extends AppCompatActivity {
         rvLynList.setAdapter(adapter);
     }
 
-    private void initializeData(){
+    private void initializeData() {
         lyns = new ArrayList<>();
-        lyns.add(new Lyn(LynType.S,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.WK,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.O,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.S,"L 1234 A", "20 min", "Full"));
-        lyns.add(new Lyn(LynType.O,"L 1234 A", "20 min", "Full"));
+        lyns.add(new Lyn(LynType.S, "L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.WK, "L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.O, "L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.S, "L 1234 A", 20, "Full"));
+        lyns.add(new Lyn(LynType.O, "L 1234 A", 20, "Full"));
     }
 }
