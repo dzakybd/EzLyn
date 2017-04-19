@@ -12,8 +12,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import id.ac.its.ezlyn.model.Lyn;
 import id.ac.its.ezlyn.R;
+import id.ac.its.ezlyn.model.Lyn;
 
 /**
  * Created by Ilham Aulia Majid on 19-Apr-17.

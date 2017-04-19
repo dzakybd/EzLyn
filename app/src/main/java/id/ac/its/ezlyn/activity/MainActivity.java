@@ -1,6 +1,7 @@
 package id.ac.its.ezlyn.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -8,7 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,7 +24,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import id.ac.its.ezlyn.R;
 
@@ -31,12 +37,14 @@ public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    MarkerOptions markerOptions;
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
+    Marker angkot,halte1,halte2;
+    TextView text;
     boolean locsetted=false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +65,52 @@ public class MainActivity extends AppCompatActivity implements
             mGoogleMap.setMyLocationEnabled(true);
         }
 
+        mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            // Use default InfoWindow frame
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v = getLayoutInflater().inflate(R.layout.infohalte, null);
+                TextView nama = (TextView) v.findViewById(R.id.nama);
+                ImageView navigasi = (ImageView) v.findViewById(R.id.navigasi);
+                nama.setText(marker.getTitle());
+                navigasi.setImageDrawable(  new IconicsDrawable(MainActivity.this)
+                        .icon(FontAwesome.Icon.faw_arrow_circle_up)
+                        .color(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)).actionBar());
+                v.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(final View v) {
+                        Intent i = new Intent(MainActivity.this, LynListActivity.class);
+                        startActivity(i);
+                    }
+                });
+                return v;
+
+            }
+        });
+
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(MainActivity.this,LynListActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                marker.showInfoWindow();
+                return false;
+            }
+        });
     }
 
-    private void setmarker(String nama, double lat, double lng, int type){
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(new LatLng(lat,lng));
-        markerOptions.title(nama);
-        if(type==1) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
-        if(type==2) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
-        mGoogleMap.addMarker(markerOptions);
-    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -80,24 +124,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-
-        //stop location updates when Activity is no longer active
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -125,16 +156,21 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLocationChanged(Location location) {
         if(!locsetted){
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
             locsetted=true;
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.position(new LatLng(location.getLatitude(), location.getLongitude()));
-//            mGoogleMap.addMarker(markerOptions);
-            setmarker("halte 1", location.getLatitude(), location.getLongitude()+0.001,1);
-            setmarker("halte 2", location.getLatitude(), location.getLongitude()+0.003,2);
-            setmarker("halte 3", location.getLatitude(), location.getLongitude()+0.005,2);
-        }
-//        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
 
+            markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(-7.279890,112.784973));
+            markerOptions.title("Halte 1");
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
+            halte1 = mGoogleMap.addMarker(markerOptions);
+
+            markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(-7.279337,112.789393));
+            markerOptions.title("Halte 2");
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
+            halte2 = mGoogleMap.addMarker(markerOptions);
+        }
     }
+
 }
