@@ -37,6 +37,8 @@
         <activity android:name=".activity.MainActivity"></activity>
         <activity android:name=".activity.LynStopActivity"></activity>
         <activity android:name=".activity.Track"></activity>
+        <activity android:name=".regis_lyn"></activity>
+        <activity android:name=".validasi"></activity>
     </application>
 
 </manifest>

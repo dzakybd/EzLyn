@@ -3,6 +3,64 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="id.ac.its.driverezlyn.activity.MainActivity">
+    android:layout_height="match_parent"
+    tools:context="id.ac.its.driverezlyn.MainActivity"
+    android:baselineAligned="false"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+    <TextView
+        android:text="Dasbor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Hello_World"
+        android:textSize="50px"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:text="Mengemudi dengan hati hati demi keselamatan bersama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hello_world"
+        android:textAlignment="center"
+        android:layout_margin="100px"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="148dp"
+        app:srcCompat="@drawable/angkot"
+        android:id="@+id/imageView2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="Heloo world"
+        android:id="@+id/result_text"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorAccent"
+        />
+
+    <ToggleButton
+        android:text="switchToList"
+        android:layout_width="141dp"
+        android:id="@+id/GoToList"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textOff="Go To List"
+        android:onClick="changeToList"
+        android:layout_weight="0.08" />
+
+    <ToggleButton
+        android:text="FullToggleButton"
+        android:layout_width="140dp"
+        android:id="@+id/FullButton"
+        android:layout_height="wrap_content"
+        tools:text="FULL"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="click here if angkot is full"
+        android:textOn="FULL saja"
+        android:textOff="Full"
+        android:onClick="changeFullState"
+        android:layout_weight="0.07" />
 
 </LinearLayout>
