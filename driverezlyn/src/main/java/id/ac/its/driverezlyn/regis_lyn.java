@@ -1,15 +1,13 @@
 package id.ac.its.driverezlyn;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
-import java.util.ArrayList;
 
 public class regis_lyn extends AppCompatActivity {
     public EditText in_plat;
@@ -42,10 +40,9 @@ public class regis_lyn extends AppCompatActivity {
         kode = in_kode.getSelectedItem().toString();
 
         Intent i = new Intent(getApplicationContext(), validasi.class);
-
         i.putExtra("lyn_code", kode);
         i.putExtra("plate_code", no_plat);
-
         startActivity(i);
+        finish();
     }
 }

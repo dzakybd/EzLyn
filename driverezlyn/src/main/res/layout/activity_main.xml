@@ -4,20 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="id.ac.its.driverezlyn.MainActivity"
+    tools:context="id.ac.its.driverezlyn.activity.MainActivity"
     android:baselineAligned="false"
     android:weightSum="1"
     android:orientation="vertical">
 
     <TextView
-        android:text="Dasbor"
+        android:id="@+id/Hello_World"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Hello_World"
-        android:textSize="50px"
-        android:textAlignment="center"/>
+        android:text="Beranda"
+        android:textColor="@color/colorPrimaryText"
+        android:textAlignment="center"
+        android:textSize="50px" />
 
     <TextView
+        android:textColor="@color/colorSecondaryText"
         android:text="Mengemudi dengan hati hati demi keselamatan bersama"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,27 +42,29 @@
         android:textColor="@color/colorAccent"
         />
 
-    <ToggleButton
-        android:text="switchToList"
-        android:layout_width="141dp"
+    <Button
         android:id="@+id/GoToList"
+        android:background="@color/colorPrimary"
+        android:layout_width="141dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textOff="Go To List"
+        android:layout_weight="0.08"
         android:onClick="changeToList"
-        android:layout_weight="0.08" />
+        android:text="Mulai"
+         />
 
     <ToggleButton
-        android:text="FullToggleButton"
-        android:layout_width="140dp"
         android:id="@+id/FullButton"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        tools:text="FULL"
         android:layout_gravity="center_horizontal"
+        android:layout_weight="0.07"
+        android:background="@color/colorPrimary"
         android:contentDescription="click here if angkot is full"
-        android:textOn="FULL saja"
-        android:textOff="Full"
         android:onClick="changeFullState"
-        android:layout_weight="0.07" />
+        android:text="FullToggleButton"
+        android:textOff="Penuh"
+        android:textOn="FULL saja"
+        tools:text="Penuh" />
 
 </LinearLayout>
