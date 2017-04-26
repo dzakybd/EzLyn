@@ -37,36 +37,42 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="L 1234 AS"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:drawableLeft="@drawable/ic_plate_24dp"/>
 
 
             <TextView
                 android:id="@+id/tv_lyn_destination"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
-                android:text="Terminal Bratang"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:text="Bratang"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:drawableLeft="@drawable/rsz_ic_stop"
+                />
 
             <TextView
                 android:id="@+id/tv_lyn_eta"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="20 min"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:drawableLeft="@drawable/ic_eta_24dp"/>
 
             <TextView
                 android:id="@+id/tv_lyn_fee"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="Rp. 5000,-"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:drawableLeft="@drawable/ic_fee_24dp"/>
 
             <TextView
                 android:id="@+id/tv_lyn_status"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="Full"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:drawableLeft="@drawable/ic_status_24dp"/>
 
         </GridLayout>
 
