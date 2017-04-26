@@ -47,5 +47,6 @@ public class regis_lyn extends AppCompatActivity {
         i.putExtra("plate_code", no_plat);
 
         startActivity(i);
+        finish();
     }
 }

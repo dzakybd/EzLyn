@@ -67,12 +67,13 @@ public class validasi extends AppCompatActivity {
     }
 
     public void init(){
-        /*
+        extras = getIntent().getExtras();
+
         if(extras != null){
             plat_nomor = extras.getString("plate_code");
             kode_lyn = extras.getString("lyn_code");
         }
-        */
+
         plat_out = (TextView) findViewById(R.id.show_plat);
         kode_out = (TextView) findViewById(R.id.show_kode);
         trayek_out = (TextView) findViewById(R.id.show_trayek);
@@ -81,8 +82,8 @@ public class validasi extends AppCompatActivity {
      //   plat_nomor = reg_data.no_plat;
      //   kode_lyn = reg_data.kode;
 
-     //   plat_out.setText(plat_nomor);
-     //   kode_out.setText(kode_lyn);
+        plat_out.setText(plat_nomor);
+        kode_out.setText(kode_lyn);
 
         if(kode_lyn=="O"){
             trayek_nama = trayek[0];
