@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EzLyn.iml" filepath="$PROJECT_DIR$/EzLyn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EzLyn1.iml" filepath="$PROJECT_DIR$/EzLyn1.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/driverezlyn/driverezlyn.iml" filepath="$PROJECT_DIR$/driverezlyn/driverezlyn.iml" />
     </modules>

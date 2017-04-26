@@ -3,6 +3,10 @@ package id.ac.its.ezlyn.model;
 import android.graphics.Color;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import id.ac.its.ezlyn.R;
 
 /**
@@ -11,9 +15,15 @@ import id.ac.its.ezlyn.R;
 
 public class LynType {
 
-    public static final LynType O = new LynType("O", R.color.textLynO, R.color.backgroundLynO, "Keputih", "JMP", 5500);
-    public static final LynType WK = new LynType("WK", R.color.textLynWk, R.color.backgroundLynWk, "Keputih", "Oso", 6000);
-    public static final LynType S = new LynType("S", R.color.textLynS, R.color.backgroundLynS, "Kenjeran", "Bratang", 5000);
+    public static final LynType O = new LynType(
+            "O", R.color.textLynO, R.color.backgroundLynO, "Keputih", "JMP", 5500,
+            new ArrayList<>(Arrays.asList(Halte.KEPUTIH1, Halte.KEPUTIH2)));
+    public static final LynType WK = new LynType(
+            "WK", R.color.textLynWk, R.color.backgroundLynWk, "Keputih", "Oso", 6000,
+            new ArrayList<>(Arrays.asList(Halte.KEPUTIH1, Halte.KEPUTIH3)));
+    public static final LynType S = new LynType(
+            "S", R.color.textLynS, R.color.backgroundLynS, "Kenjeran", "Bratang", 5000,
+            new ArrayList<>(Arrays.asList(Halte.KEPUTIH3, Halte.KEPUTIH4)));
 
     private String code;
     private int textColor;
@@ -21,14 +31,16 @@ public class LynType {
     private String startPoint;
     private String endPoint;
     private int fee;
+    List<Halte> haltes;
 
-    public LynType(String code, int textColor, int backgroundColor, String startPoint, String endPoint, int fee) {
+    public LynType(String code, int textColor, int backgroundColor, String startPoint, String endPoint, int fee, List<Halte> haltes) {
         this.code = code;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.fee = fee;
+        this.haltes = haltes;
     }
 
     public String getCode() {
