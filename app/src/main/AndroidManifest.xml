@@ -36,7 +36,6 @@
         </activity>
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.LynListActivity" />
-        <activity android:name=".activity.Track"></activity>
     </application>
 
 </manifest>

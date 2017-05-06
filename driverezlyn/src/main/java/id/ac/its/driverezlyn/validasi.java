@@ -1,14 +1,13 @@
 package id.ac.its.driverezlyn;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import id.ac.its.driverezlyn.activity.MainActivity;
 
 public class validasi extends AppCompatActivity {
 

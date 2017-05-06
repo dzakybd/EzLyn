@@ -1,9 +1,11 @@
 package id.ac.its.ezlyn.model;
 
+import org.parceler.Parcel;
+
 /**
  * Created by Ilham Aulia Majid on 20-Apr-17.
  */
-
+@Parcel
 public class Halte {
 
     private String name;

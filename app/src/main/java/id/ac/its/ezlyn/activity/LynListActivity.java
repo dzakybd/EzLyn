@@ -1,77 +1,406 @@
 package id.ac.its.ezlyn.activity;
 
-import android.content.DialogInterface;
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.constant.Unit;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import id.ac.its.ezlyn.R;
-import id.ac.its.ezlyn.adapter.ItemClickSupport;
+import id.ac.its.ezlyn.model.Halte;
 import id.ac.its.ezlyn.model.Lyn;
 
-public class LynListActivity extends AppCompatActivity {
+public class LynListActivity extends AppCompatActivity  implements
+        OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
-    @BindView(R.id.rv_lyn_list)
-    RecyclerView rvLynList;
-
+    MarkerOptions markerOptions;
+    GoogleMap mGoogleMap;
+    SupportMapFragment mapFrag;
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    Halte halte;
+    Marker marker_h;
+    Lyn lyn;
     List<Lyn> lyns;
+    boolean locsetted = false;
+    DatabaseReference databaseHalte,databaseLyn;
+    Polyline polyline;
+    TextView full, nama, jarak;
+    PolylineOptions[] map_poli = new PolylineOptions[10];
+    String[] map_distance = new String[10];
+    String[] map_duration = new String[10];
+    Handler mHandler;
+    Runnable mAnimation;
+    @BindView(R.id.toolbar_title)
+    TextView toolbarTitle;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tv_lyn_code)
+    TextView tvLynCode;
+    @BindView(R.id.tv_lyn_destination)
+    TextView tvLynDestination;
+    @BindView(R.id.tv_lyn_eta)
+    TextView tvLynEta;
+    @BindView(R.id.tv_lyn_fee)
+    TextView tvLynFee;
+    @BindView(R.id.tv_lyn_status)
+    TextView tvLynStatus;
+    @BindView(R.id.lyn)
+    CardView cardlyn;
+    @BindView(R.id.selesai)
+    Button selesai;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyn_list);
         ButterKnife.bind(this);
-
-//        initializeData();
-
-        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-        rvLynList.setLayoutManager(llm);
-        rvLynList.setHasFixedSize(true);
-
-//        LynRecyclerViewAdapter adapter = new LynRecyclerViewAdapter(getApplicationContext(), lyns);
-//        rvLynList.setAdapter(adapter);
-
-        ItemClickSupport.addTo(rvLynList).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        AlertDialog.Builder pilihan = new AlertDialog.Builder(LynListActivity.this);
-                        pilihan.setMessage("Anda ingin menunggu "+lyns.get(position).getPlate()+" ?");
-                        pilihan.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                startActivity(new Intent(LynListActivity.this, Track.class));
-                                finish();
-                            }
-                        });
-                        pilihan.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-                        AlertDialog alert = pilihan.create();
-                        alert.show();
-
-                    }
-                }
-        );
+        halte = Parcels.unwrap(getIntent().getParcelableExtra("halte"));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryText, null));
+        databaseHalte = FirebaseDatabase.getInstance().getReference("halte");
+        databaseLyn = FirebaseDatabase.getInstance().getReference("lyn");
+        mapFrag = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFrag.getMapAsync(this);
     }
 
-//
-//    private void initializeData(){
-//        lyns = new ArrayList<>();
-//        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
-//        lyns.add(new Lyn(LynType.WK,"L 1234 A", 20, "Full"));
-//        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
-//        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
-//        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
-//    }
+    @OnClick(R.id.selesai)
+    public void onViewClicked() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Selesai");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                databaseHalte.child(halte.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int waiting = dataSnapshot.getValue(Halte.class).getWaiting();
+                        waiting=waiting-1;
+                        databaseHalte.child(halte.getName()).child("waiting").setValue(waiting);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+                Intent intent = new Intent(LynListActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            buildGoogleApiClient();
+            mGoogleMap.setMyLocationEnabled(true);
+        }
+
+        mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            // Use default InfoWindow frame
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v = getLayoutInflater().inflate(R.layout.infolyn, null);
+                nama = (TextView) v.findViewById(R.id.nama);
+                jarak = (TextView) v.findViewById(R.id.jarak);
+                full = (TextView) v.findViewById(R.id.full);
+                nama.setText(marker.getTitle());
+                if(marker.getTitle().contentEquals(halte.getName())){
+                    jarak.setVisibility(View.GONE);
+                    full.setVisibility(View.GONE);
+                }else{
+                    tvLynDestination.setCompoundDrawables(
+                            new IconicsDrawable(LynListActivity.this)
+                            .icon(GoogleMaterial.Icon.gmd_directions_car)
+                            .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                            .actionBar(),
+                            null, null, null );
+                    tvLynEta.setCompoundDrawables(
+                            new IconicsDrawable(LynListActivity.this)
+                                    .icon(GoogleMaterial.Icon.gmd_av_timer)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null );
+                    tvLynFee.setCompoundDrawables(
+                            new IconicsDrawable(LynListActivity.this)
+                                    .icon(GoogleMaterial.Icon.gmd_attach_money)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null );
+                    tvLynStatus.setCompoundDrawables(
+                            new IconicsDrawable(LynListActivity.this)
+                                    .icon(GoogleMaterial.Icon.gmd_group)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null );
+                    cardlyn.setVisibility(View.VISIBLE);
+                    for (Lyn h : lyns) {
+                        if (h.getPlate().contentEquals(marker.getTitle())) {
+                            int index = lyns.indexOf(h);
+                            lyn=h;
+                            if(h.isFull()){
+                                full.setText("Penuh");
+                                tvLynStatus.setText("Penuh");
+                            }
+                            else{
+                                full.setText("Tersedia");
+                                tvLynStatus.setText("Tersedia");
+                            }
+                            tvLynCode.setText(h.getPlate());
+                            tvLynDestination.setText(map_distance[index]);
+                            jarak.setText(map_distance[index]);
+                            tvLynEta.setText(map_duration[index]);
+                            tvLynFee.setText("Rp "+h.getPrice());
+                            if (polyline != null) {
+                                polyline.remove();
+                            }
+                            polyline = mGoogleMap.addPolyline(map_poli[index]);
+                            break;
+                        }
+                    }
+                }
+                return v;
+            }
+        });
+
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if (polyline != null) {
+                    polyline.remove();
+                }
+                cardlyn.setVisibility(View.GONE);
+            }
+        });
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+                mHandler = new Handler();
+                final long start = SystemClock.uptimeMillis();
+                final long duration = 400L;
+                mHandler.removeCallbacks(mAnimation);
+                mAnimation = new BounceAnimation(start, duration, marker, mHandler);
+                mHandler.post(mAnimation);
+                marker.showInfoWindow();
+                return false;
+            }
+        });
+    }
+
+
+    private static class BounceAnimation implements Runnable {
+
+        private final long mStart, mDuration;
+        private final Interpolator mInterpolator;
+        private final Marker mMarker;
+        private final Handler mHandler;
+
+        private BounceAnimation(long start, long duration, Marker marker, Handler handler) {
+            mStart = start;
+            mDuration = duration;
+            mMarker = marker;
+            mHandler = handler;
+            mInterpolator = new BounceInterpolator();
+        }
+
+        @Override
+        public void run() {
+            long elapsed = SystemClock.uptimeMillis() - mStart;
+            float t = Math.max(1 - mInterpolator.getInterpolation((float) elapsed / mDuration), 0f);
+            mMarker.setAnchor(0.5f, 1.0f + 0.5f * t);
+
+            if (t > 0.0) {
+                // Post again 16ms later.
+                mHandler.postDelayed(this, 16L);
+            }
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (!locsetted) {
+            final LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            lyns = new ArrayList<>();
+            locsetted = true;
+            markerOptions = new MarkerOptions();
+            final LatLng halteloc=new LatLng(halte.getLat(), halte.getLng());
+            builder.include(halteloc);
+            markerOptions.position(halteloc);
+            markerOptions.title(halte.getName());
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
+            marker_h=mGoogleMap.addMarker(markerOptions);
+            databaseLyn.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        lyn = dsp.getValue(Lyn.class);
+                        if(lyn.isStatus()){
+                            lyns.add(lyn);
+                            final int index = lyns.indexOf(lyn);
+                            markerOptions = new MarkerOptions();
+                            LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
+                            markerOptions.position(lynloc);
+                            builder.include(lynloc);
+                            markerOptions.title(lyn.getPlate());
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
+                            mGoogleMap.addMarker(markerOptions);
+                            GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
+                                    .from(halteloc)
+                                    .to(lynloc)
+                                    .unit(Unit.IMPERIAL)
+                                    .transitMode(TransportMode.DRIVING)
+                                    .avoid(AvoidType.TOLLS)
+                                    .avoid(AvoidType.FERRIES)
+                                    .execute(new DirectionCallback() {
+                                        @Override
+                                        public void onDirectionSuccess(Direction direction, String rawBody) {
+                                            if (direction.isOK()) {
+                                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                                map_duration[index] = direction.getRouteList().get(0).getLegList().get(0).getDuration().getText();
+                                                map_distance[index] = direction.getRouteList().get(0).getLegList().get(0).getDistance().getText();
+                                                map_poli[index] = DirectionConverter.createPolyline(LynListActivity.this, directionPositionList, 5, ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                                            } else {
+                                                Log.d("mapse", rawBody);
+                                                // Do something
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onDirectionFailure(Throwable t) {
+                                            Log.d("mapse", t.toString());
+                                        }
+                                    });
+                            }
+                        }
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
+                    mGoogleMap.moveCamera(cu);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w("Oye", "Failed to read value.", error.toException());
+                }
+            });
+        }
+    }
+
 }
