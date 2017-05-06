@@ -6,15 +6,27 @@ package id.ac.its.ezlyn.model;
 
 public class Lyn {
 
-    LynType type;
     private String plate;
-    private int eta;
-    private String status;
+    private boolean full,status;
 
-    public Lyn(LynType type, String plate, int eta, String status) {
-        this.type = type;
+    public Lyn() {
+    }
+
+    public Lyn(String plate, boolean full, boolean status) {
+        this.plate=plate;
+        this.full=full;
+        this.status=status;
+    }
+
+    public void setFull(boolean full) {
+        this.full = full;
+    }
+
+    public void setPlate(String plate) {
         this.plate = plate;
-        this.eta = eta;
+    }
+
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
@@ -22,15 +34,11 @@ public class Lyn {
         return plate;
     }
 
-    public String getEta() {
-        return String.format("%s menit",eta);
+    public boolean isFull() {
+        return full;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
-    }
-
-    public LynType getType() {
-        return type;
     }
 }

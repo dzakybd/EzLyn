@@ -9,16 +9,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.ac.its.ezlyn.R;
 import id.ac.its.ezlyn.adapter.ItemClickSupport;
-import id.ac.its.ezlyn.adapter.LynRecyclerViewAdapter;
 import id.ac.its.ezlyn.model.Lyn;
-import id.ac.its.ezlyn.model.LynType;
 
 public class LynListActivity extends AppCompatActivity {
 
@@ -33,14 +30,14 @@ public class LynListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lyn_list);
         ButterKnife.bind(this);
 
-        initializeData();
+//        initializeData();
 
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         rvLynList.setLayoutManager(llm);
         rvLynList.setHasFixedSize(true);
 
-        LynRecyclerViewAdapter adapter = new LynRecyclerViewAdapter(getApplicationContext(), lyns);
-        rvLynList.setAdapter(adapter);
+//        LynRecyclerViewAdapter adapter = new LynRecyclerViewAdapter(getApplicationContext(), lyns);
+//        rvLynList.setAdapter(adapter);
 
         ItemClickSupport.addTo(rvLynList).setOnItemClickListener(
                 new ItemClickSupport.OnItemClickListener() {
@@ -68,13 +65,13 @@ public class LynListActivity extends AppCompatActivity {
         );
     }
 
-
-    private void initializeData(){
-        lyns = new ArrayList<>();
-        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
-        lyns.add(new Lyn(LynType.WK,"L 1234 A", 20, "Full"));
-        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
-        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
-        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
-    }
+//
+//    private void initializeData(){
+//        lyns = new ArrayList<>();
+//        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
+//        lyns.add(new Lyn(LynType.WK,"L 1234 A", 20, "Full"));
+//        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
+//        lyns.add(new Lyn(LynType.S,"L 1234 A", 20, "Full"));
+//        lyns.add(new Lyn(LynType.O,"L 1234 A", 20, "Full"));
+//    }
 }
