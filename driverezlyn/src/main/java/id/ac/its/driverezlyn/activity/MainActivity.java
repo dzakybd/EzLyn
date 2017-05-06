@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import id.ac.its.driverezlyn.R;
-import id.ac.its.driverezlyn.regis_lyn;
 
 import static id.ac.its.driverezlyn.R.layout.activity_main;
 

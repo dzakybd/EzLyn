@@ -12,7 +12,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.ac.its.driverezlyn.R;
-import id.ac.its.driverezlyn.model.LynStop;
 
 /**
  * Created by Ilham Aulia Majid on 19-Apr-17.

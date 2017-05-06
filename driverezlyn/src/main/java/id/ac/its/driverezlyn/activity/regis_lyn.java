@@ -1,4 +1,4 @@
-package id.ac.its.driverezlyn;
+package id.ac.its.driverezlyn.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import id.ac.its.driverezlyn.R;
 
 public class regis_lyn extends AppCompatActivity {
     public EditText in_plat;
