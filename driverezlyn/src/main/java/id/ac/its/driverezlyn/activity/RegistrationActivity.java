@@ -11,7 +11,7 @@ import android.widget.Spinner;
 
 import id.ac.its.driverezlyn.R;
 
-public class regis_lyn extends AppCompatActivity {
+public class RegistrationActivity extends AppCompatActivity {
     public EditText in_plat;
     public Spinner in_kode;
     public String no_plat, kode;
@@ -22,7 +22,7 @@ public class regis_lyn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_regis_lyn);
+        setContentView(R.layout.activity_registration);
 
         Spinner mySpinner = (Spinner)findViewById(R.id.kodeAngkot);
 

@@ -41,7 +41,7 @@ public class Splashscreen extends AppCompatActivity {
         new Prefs.Builder()
                 .setContext(this)
                 .setMode(ContextWrapper.MODE_PRIVATE)
-                .setPrefsName(getPackageName())
+                .setPrefsName("EzLyn")
                 .setUseDefaultSharedPreference(true)
                 .build();
         if (!Prefs.getBoolean("logged", false)) {

@@ -34,10 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity"></activity>
         <activity android:name=".activity.LynStopActivity"></activity>
         <activity android:name=".activity.Track"></activity>
-        <activity android:name=".activity.regis_lyn"></activity>
+        <activity android:name=".activity.RegistrationActivity"></activity>
     </application>
 
 </manifest>
