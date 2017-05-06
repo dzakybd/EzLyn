@@ -127,6 +127,18 @@ public class LynListActivity extends AppCompatActivity  implements
 
     @OnClick(R.id.selesai)
     public void onViewClicked() {
+        databaseHalte.child(halte.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int waiting = dataSnapshot.getValue(Halte.class).getWaiting();
+                waiting=waiting-1;
+                databaseHalte.child(halte.getName()).child("waiting").setValue(waiting);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Selesai");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -137,18 +149,6 @@ public class LynListActivity extends AppCompatActivity  implements
             @Override
             public void run() {
                 progressDialog.dismiss();
-                databaseHalte.child(halte.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int waiting = dataSnapshot.getValue(Halte.class).getWaiting();
-                        waiting=waiting-1;
-                        databaseHalte.child(halte.getName()).child("waiting").setValue(waiting);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
                 Intent intent = new Intent(LynListActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();

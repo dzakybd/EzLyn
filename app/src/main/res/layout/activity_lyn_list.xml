@@ -41,6 +41,7 @@
         map:cameraZoom="15"
         map:mapType="normal"
         map:uiCompass="false"
+        map:uiMapToolbar="false"
         map:uiRotateGestures="true"
         map:uiScrollGestures="true"
         map:uiZoomControls="false"
