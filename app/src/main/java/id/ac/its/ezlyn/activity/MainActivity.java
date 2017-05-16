@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -15,10 +16,16 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -91,6 +98,10 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
 
+    private PopupWindow popUps;
+    private LayoutInflater layoutInflater;
+    private RelativeLayout relativeLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,17 +115,20 @@ public class MainActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+        relativeLayout = (RelativeLayout)findViewById(R.id.reminder);
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+        Log.d("STATE", "Google map inisiasi");
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
+            Log.d("STATE", "Sudah enable location");
         }
 
         mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -145,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements
                         break;
                     }
                 }
-
+                Log.d("STATE", "Harusnya disini sudah jalan");
                 return v;
             }
         });
@@ -260,10 +274,28 @@ public class MainActivity extends AppCompatActivity implements
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        ViewGroup container = (ViewGroup)layoutInflater.inflate(R.layout.pop_up_gps, null);
+
+        popUps = new PopupWindow(container, 400, 400, true );
+        popUps.showAtLocation(relativeLayout, Gravity.NO_GRAVITY,500,500);
+
+        //if GPS is connected
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        else{
+            container.setOnTouchListener(new View.OnTouchListener(){
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent){
+                    popUps.dismiss();
+                    return true;
+                }
+            }
+            );
         }
     }
 
