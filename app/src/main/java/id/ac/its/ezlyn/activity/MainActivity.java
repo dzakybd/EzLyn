@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements
                         markerOptions.position(halteloc);
                         builder.include(halteloc);
                         markerOptions.title(halte.getName());
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte_k));
                         mGoogleMap.addMarker(markerOptions);
                         GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
                                 .from(new LatLng(myloc.getLatitude(), myloc.getLongitude()))
