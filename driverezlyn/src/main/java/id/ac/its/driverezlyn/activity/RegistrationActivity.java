@@ -53,24 +53,9 @@ public class RegistrationActivity extends AppCompatActivity {
             move();
         }
         databaseLyn = FirebaseDatabase.getInstance().getReference("lyn");
-        platNomor.addTextChangedListener(new TextWatcher() {
+        TextWatcher watcher = new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-            }
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ifedit();
-            }
-        });
-
-        harga.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-
             }
 
             @Override
@@ -81,23 +66,25 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 ifedit();
             }
-        });
+        };
+        platNomor.addTextChangedListener(watcher);
+        harga.addTextChangedListener(watcher);
     }
 
-    private void ifedit(){
-        if(!harga.getText().toString().isEmpty()&&!platNomor.getText().toString().isEmpty()){
+    private void ifedit() {
+        if (!harga.getText().toString().isEmpty() && !platNomor.getText().toString().isEmpty()) {
             nextRegis.setVisibility(View.VISIBLE);
-        }else nextRegis.setVisibility(View.GONE);
+        } else nextRegis.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.next_regis)
     public void onViewClicked() {
-        String a=platNomor.getText().toString();
-        int b=Integer.parseInt(harga.getText().toString());
-        lyn = new Lyn(a,b,false,true, -7.275622, 112.793449);
+        String a = platNomor.getText().toString();
+        int b = Integer.parseInt(harga.getText().toString());
+        lyn = new Lyn(a, b, false, true, -7.275622, 112.793449);
         databaseLyn.child(lyn.getPlate()).setValue(lyn);
-        Prefs.putString("plat",a);
-        Prefs.putInt("harga",b);
+        Prefs.putString("plat", a);
+        Prefs.putInt("harga", b);
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Menyimpan");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -113,7 +100,7 @@ public class RegistrationActivity extends AppCompatActivity {
         }, 2000);
     }
 
-    private void move(){
+    private void move() {
         Intent i = new Intent(this, LynStopActivity.class);
         startActivity(i);
         finish();

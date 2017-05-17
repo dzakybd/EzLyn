@@ -9,7 +9,7 @@ import org.parceler.Parcel;
 public class Lyn {
 
     private String plate;
-    private boolean full,status;
+    private boolean full, status;
     private double lat;
     private double lng;
     private int price;
@@ -17,13 +17,13 @@ public class Lyn {
     public Lyn() {
     }
 
-    public Lyn(String plate,int price, boolean full, boolean status, double lat, double lng) {
-        this.plate=plate;
-        this.price=price;
-        this.full=full;
-        this.status=status;
-        this.lat=lat;
-        this.lng=lng;
+    public Lyn(String plate, int price, boolean full, boolean status, double lat, double lng) {
+        this.plate = plate;
+        this.price = price;
+        this.full = full;
+        this.status = status;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public int getPrice() {

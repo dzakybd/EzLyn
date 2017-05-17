@@ -31,9 +31,10 @@ import id.ac.its.driverezlyn.model.Lyn;
 
 public class Splashscreen extends AppCompatActivity {
     private AVLoadingIndicatorView avi;
-    private DatabaseReference databaseHalte,databaseLyn;
+    private DatabaseReference databaseHalte, databaseLyn;
     Halte halte;
     Lyn lyn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,22 +46,23 @@ public class Splashscreen extends AppCompatActivity {
                 .setUseDefaultSharedPreference(true)
                 .build();
         if (!Prefs.getBoolean("logged", false)) {
-            Prefs.putBoolean("logged",true);
+            Prefs.putBoolean("logged", true);
             databaseLyn = FirebaseDatabase.getInstance().getReference("lyn");
             databaseLyn.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     if (!snapshot.hasChild("lyn")) {
-                        lyn = new Lyn("L 12 A",5000,true,false, -7.275622, 112.793449);
+                        lyn = new Lyn("L 12 A", 5000, true, false, -7.275622, 112.793449);
                         databaseLyn.child(lyn.getPlate()).setValue(lyn);
-                        lyn = new Lyn("L 23 B",6000,true,true, -7.280443, 112.781068);
+                        lyn = new Lyn("L 23 B", 6000, true, true, -7.280443, 112.781068);
                         databaseLyn.child(lyn.getPlate()).setValue(lyn);
-                        lyn = new Lyn("L 34 C",7000,false,true, -7.276655, 112.786196);
+                        lyn = new Lyn("L 34 C", 7000, false, true, -7.276655, 112.786196);
                         databaseLyn.child(lyn.getPlate()).setValue(lyn);
-                        lyn = new Lyn("L 45 D",8000,true,true, -7.277549, 112.780939);
+                        lyn = new Lyn("L 45 D", 8000, true, true, -7.277549, 112.780939);
                         databaseLyn.child(lyn.getPlate()).setValue(lyn);
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
@@ -71,16 +73,17 @@ public class Splashscreen extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     if (!snapshot.hasChild("halte")) {
-                        halte = new Halte("Halte 1",0, -7.279890,112.784973);
+                        halte = new Halte("Halte 1", 0, -7.279890, 112.784973);
                         databaseHalte.child(halte.getName()).setValue(halte);
-                        halte = new Halte("Halte 2",0, -7.279337,112.789393);
+                        halte = new Halte("Halte 2", 0, -7.279337, 112.789393);
                         databaseHalte.child(halte.getName()).setValue(halte);
-                        halte = new Halte("Halte 3",0, -7.278337,112.789393);
+                        halte = new Halte("Halte 3", 0, -7.278337, 112.789393);
                         databaseHalte.child(halte.getName()).setValue(halte);
-                        halte = new Halte("Halte 4",0, -7.277337,112.789393);
+                        halte = new Halte("Halte 4", 0, -7.277337, 112.789393);
                         databaseHalte.child(halte.getName()).setValue(halte);
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
@@ -96,7 +99,8 @@ public class Splashscreen extends AppCompatActivity {
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.ACCESS_FINE_LOCATION
                 ).withListener(new MultiplePermissionsListener() {
-            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
                 avi.show();
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -107,9 +111,12 @@ public class Splashscreen extends AppCompatActivity {
                     }
                 }, 2000);
             }
-            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
         }).withErrorListener(new PermissionRequestErrorListener() {
-            @Override public void onError(DexterError error) {
+            @Override
+            public void onError(DexterError error) {
                 Log.e("Dexter", "There was an error: " + error.toString());
             }
         }).check();

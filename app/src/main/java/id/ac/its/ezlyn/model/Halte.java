@@ -16,11 +16,11 @@ public class Halte {
     public Halte() {
     }
 
-    public Halte(String name,int waiting, double lat, double lng) {
+    public Halte(String name, int waiting, double lat, double lng) {
         this.name = name;
         this.waiting = waiting;
-        this.lat=lat;
-        this.lng=lng;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public String getName() {
