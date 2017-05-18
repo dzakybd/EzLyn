@@ -88,11 +88,12 @@ public class LynStopActivity extends AppCompatActivity implements
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location myloc;
+    Marker mymarker;
     Halte halte;
     List<Halte> haltes;
     boolean locsetted = false;
-    boolean penuhbool, kerjabool;
-    DatabaseReference databaseHalte, databaseLyn;
+    boolean penuhbool,kerjabool;
+    DatabaseReference databaseHalte,databaseLyn;
     Polyline polyline;
     TextView jumlah, nama, jarak;
     PolylineOptions[] map_poli = new PolylineOptions[10];
@@ -137,27 +138,28 @@ public class LynStopActivity extends AppCompatActivity implements
                 .setUseDefaultSharedPreference(true)
                 .build();
         databaseLyn = FirebaseDatabase.getInstance().getReference("lyn");
-        databaseLyn.child(Prefs.getString("plat", "")).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseLyn.child(Prefs.getString("plat","")).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(Lyn.class).isFull()) {
+                if(dataSnapshot.getValue(Lyn.class).isFull()){
                     penuh.setText("Angkot penuh");
-                    penuhbool = true;
-                } else {
+                    penuhbool=true;
+                }
+                else{
                     penuh.setText("Angkot tersedia");
-                    penuhbool = false;
+                    penuhbool=false;
                 }
 
-                if (dataSnapshot.getValue(Lyn.class).isStatus()) {
-                    kerjabool = true;
+                if(dataSnapshot.getValue(Lyn.class).isStatus()){
+                    kerjabool=true;
                     kerja.setChecked(true);
-                } else {
+                }
+                else{
                     penuh.setText("Anda sedang istirahat");
-                    kerjabool = false;
+                    kerjabool=false;
                     kerja.setChecked(false);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -196,7 +198,7 @@ public class LynStopActivity extends AppCompatActivity implements
         pilihan.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                databaseLyn.child(Prefs.getString("plat", "")).removeValue();
+                databaseLyn.child(Prefs.getString("plat","")).removeValue();
                 Prefs.clear();
                 startActivity(new Intent(LynStopActivity.this, RegistrationActivity.class));
                 finish();
@@ -212,11 +214,11 @@ public class LynStopActivity extends AppCompatActivity implements
     }
 
 
-    @OnClick({R.id.penuh, R.id.kerja})
+    @OnClick({R.id.penuh,R.id.kerja})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.kerja:
-                databaseLyn.child(Prefs.getString("plat", "")).child("status").setValue(!kerjabool);
+                databaseLyn.child(Prefs.getString("plat","")).child("status").setValue(!kerjabool);
                 progressDialog = new ProgressDialog(LynStopActivity.this);
                 progressDialog.setMessage("Memproses");
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -229,23 +231,24 @@ public class LynStopActivity extends AppCompatActivity implements
                         progressDialog.dismiss();
                         if (kerjabool) {
                             penuh.setText("Anda sedang istirahat");
-                            kerjabool = false;
+                            kerjabool=false;
                             kerja.setChecked(false);
                         } else {
-                            if (penuhbool) {
+                            if(penuhbool){
                                 penuh.setText("Angkot penuh");
-                            } else {
+                            }
+                            else{
                                 penuh.setText("Angkot tersedia");
                             }
-                            kerjabool = true;
+                            kerjabool=true;
                             kerja.setChecked(true);
                         }
                     }
                 }, 2000);
                 break;
             case R.id.penuh:
-                if (kerjabool) {
-                    databaseLyn.child(Prefs.getString("plat", "")).child("full").setValue(!penuhbool);
+                if(kerjabool){
+                    databaseLyn.child(Prefs.getString("plat","")).child("full").setValue(!penuhbool);
                     progressDialog = new ProgressDialog(this);
                     progressDialog.setMessage("Memproses");
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -256,11 +259,12 @@ public class LynStopActivity extends AppCompatActivity implements
                         @Override
                         public void run() {
                             progressDialog.dismiss();
-                            if (penuhbool) {
-                                penuhbool = false;
+                            if(penuhbool){
+                                penuhbool=false;
                                 penuh.setText("Angkot tersedia");
-                            } else {
-                                penuhbool = true;
+                            }
+                            else{
+                                penuhbool=true;
                                 penuh.setText("Angkot penuh");
                             }
                         }
@@ -269,7 +273,6 @@ public class LynStopActivity extends AppCompatActivity implements
                 break;
         }
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -277,7 +280,7 @@ public class LynStopActivity extends AppCompatActivity implements
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
-            mGoogleMap.setMyLocationEnabled(true);
+//            mGoogleMap.setMyLocationEnabled(true);
         }
 
         mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -295,44 +298,52 @@ public class LynStopActivity extends AppCompatActivity implements
                 jarak = (TextView) v.findViewById(R.id.jarak);
                 jumlah = (TextView) v.findViewById(R.id.jumlah);
                 nama.setText(marker.getTitle());
-                namaHalte.setText(marker.getTitle());
-                jarakHalte.setCompoundDrawables(
-                        new IconicsDrawable(LynStopActivity.this)
-                                .icon(GoogleMaterial.Icon.gmd_directions_car)
-                                .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
-                                .actionBar(),
-                        null, null, null);
-                waktuHalte.setCompoundDrawables(
-                        new IconicsDrawable(LynStopActivity.this)
-                                .icon(GoogleMaterial.Icon.gmd_av_timer)
-                                .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
-                                .actionBar(),
-                        null, null, null);
-                jumlahHalte.setCompoundDrawables(
-                        new IconicsDrawable(LynStopActivity.this)
-                                .icon(GoogleMaterial.Icon.gmd_group)
-                                .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
-                                .actionBar(),
-                        null, null, null);
-                cardhalte.setVisibility(View.VISIBLE);
-                for (Halte h : haltes) {
-                    if (h.getName().contentEquals(marker.getTitle())) {
-                        int index = haltes.indexOf(h);
-                        halte = h;
-                        jumlah.setText(h.getWaiting() + " penunggu");
-                        jumlahHalte.setText(h.getWaiting() + " orang");
-                        jarak.setText(map_distance[index]);
-                        jarakHalte.setText(map_distance[index]);
-                        waktuHalte.setText(map_duration[index]);
-                        if (polyline != null) {
-                            polyline.remove();
+                if(marker.getTitle().contentEquals(Prefs.getString("plat",""))){
+                    jarak.setVisibility(View.GONE);
+                    jumlah.setVisibility(View.GONE);
+                    cardhalte.setVisibility(View.GONE);
+                    if (polyline != null) {
+                        polyline.remove();
+                    }
+                }else{
+                    namaHalte.setText(marker.getTitle());
+                    jarakHalte.setCompoundDrawables(
+                            new IconicsDrawable(LynStopActivity.this)
+                                    .icon(GoogleMaterial.Icon.gmd_directions_car)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null );
+                    waktuHalte.setCompoundDrawables(
+                            new IconicsDrawable(LynStopActivity.this)
+                                    .icon(GoogleMaterial.Icon.gmd_av_timer)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null );
+                    jumlahHalte.setCompoundDrawables(
+                            new IconicsDrawable(LynStopActivity.this)
+                                    .icon(GoogleMaterial.Icon.gmd_group)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null );
+                    cardhalte.setVisibility(View.VISIBLE);
+                    for (Halte h : haltes) {
+                        if (h.getName().contentEquals(marker.getTitle())) {
+                            int index = haltes.indexOf(h);
+                            halte=h;
+                            jumlah.setText(h.getWaiting() + " penunggu");
+                            jumlahHalte.setText(h.getWaiting() + " orang");
+                            jarak.setText(map_distance[index]);
+                            jarakHalte.setText(map_distance[index]);
+                            waktuHalte.setText(map_duration[index]);
+                            if (polyline != null) {
+                                polyline.remove();
+                            }
+                            polyline = mGoogleMap.addPolyline(map_poli[index]);
+                            break;
                         }
-                        polyline = mGoogleMap.addPolyline(map_poli[index]);
-                        break;
                     }
                 }
-
-                return v;
+                           return v;
             }
         });
 
@@ -433,11 +444,18 @@ public class LynStopActivity extends AppCompatActivity implements
     @Override
     public void onLocationChanged(Location location) {
         myloc = location;
+        databaseLyn.child(Prefs.getString("plat","")).child("lat").setValue(myloc.getLatitude());
+        databaseLyn.child(Prefs.getString("plat","")).child("lng").setValue(myloc.getLongitude());
+        if(mymarker!=null)mymarker.remove();
+        markerOptions = new MarkerOptions();
+        markerOptions.position(new LatLng(myloc.getLatitude(), myloc.getLongitude()));
+        markerOptions.title(Prefs.getString("plat",""));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
+        mymarker=mGoogleMap.addMarker(markerOptions);
         if (!locsetted) {
             final LatLngBounds.Builder builder = new LatLngBounds.Builder();
             builder.include(new LatLng(myloc.getLatitude(), myloc.getLongitude()));
             haltes = new ArrayList<>();
-            locsetted = true;
             databaseHalte.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -450,7 +468,7 @@ public class LynStopActivity extends AppCompatActivity implements
                         markerOptions.position(halteloc);
                         builder.include(halteloc);
                         markerOptions.title(halte.getName());
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte_k));
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
                         mGoogleMap.addMarker(markerOptions);
                         GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
                                 .from(new LatLng(myloc.getLatitude(), myloc.getLongitude()))
@@ -482,6 +500,7 @@ public class LynStopActivity extends AppCompatActivity implements
                     LatLngBounds bounds = builder.build();
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
                     mGoogleMap.moveCamera(cu);
+                    locsetted = true;
                 }
 
                 @Override
@@ -496,9 +515,9 @@ public class LynStopActivity extends AppCompatActivity implements
     public void statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()) {
-            } else buildAlertMessageNoInt();
-        } else buildAlertMessageNoInt();
+            if (connectivity.getActiveNetworkInfo().isConnected()){}
+            else buildAlertMessageNoInt();
+        }else buildAlertMessageNoInt();
     }
 
     public void statusCheckGPS() {
