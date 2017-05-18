@@ -70,7 +70,6 @@ import butterknife.OnClick;
 import id.ac.its.ezlyn.R;
 import id.ac.its.ezlyn.TutorialActivity;
 import id.ac.its.ezlyn.model.Halte;
-import id.ac.its.ezlyn.tutorial_new;
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
-
+    ProgressDialog cover;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +128,12 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
             }
         });
+        cover = new ProgressDialog(this);
+        cover.setMessage("Memproses");
+        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        cover.setCancelable(false);
+        cover.setCanceledOnTouchOutside(false);
+        cover.show();
     }
 
 
@@ -340,7 +345,6 @@ public class MainActivity extends AppCompatActivity implements
             final LatLngBounds.Builder builder = new LatLngBounds.Builder();
             builder.include(new LatLng(myloc.getLatitude(), myloc.getLongitude()));
             haltes = new ArrayList<>();
-            locsetted = true;
             databaseHalte.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -383,6 +387,7 @@ public class MainActivity extends AppCompatActivity implements
                                 });
                     }
                     LatLngBounds bounds = builder.build();
+                    cover.dismiss();
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
                     mGoogleMap.moveCamera(cu);
                 }
@@ -390,10 +395,10 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onCancelled(DatabaseError error) {
                     // Failed to read value
-                    Log.d("saas","cancel");
                     Log.w("Oye", "Failed to read value.", error.toException());
                 }
             });
+            locsetted = true;
         }
     }
 

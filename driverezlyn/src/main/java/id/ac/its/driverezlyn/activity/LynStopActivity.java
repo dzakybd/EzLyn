@@ -119,7 +119,8 @@ public class LynStopActivity extends AppCompatActivity implements
     CardView cardhalte;
     @BindView(R.id.penuh)
     Button penuh;
-    ProgressDialog progressDialog;
+    ProgressDialog progressDialog,cover;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +170,12 @@ public class LynStopActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+        cover = new ProgressDialog(this);
+        cover.setMessage("Memproses");
+        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        cover.setCancelable(false);
+        cover.setCanceledOnTouchOutside(false);
+        cover.show();
     }
 
     @Override
@@ -446,7 +453,9 @@ public class LynStopActivity extends AppCompatActivity implements
         myloc = location;
         databaseLyn.child(Prefs.getString("plat","")).child("lat").setValue(myloc.getLatitude());
         databaseLyn.child(Prefs.getString("plat","")).child("lng").setValue(myloc.getLongitude());
-        if(mymarker!=null)mymarker.remove();
+        if(mymarker!=null){
+            mymarker.remove();
+        }
         markerOptions = new MarkerOptions();
         markerOptions.position(new LatLng(myloc.getLatitude(), myloc.getLongitude()));
         markerOptions.title(Prefs.getString("plat",""));
@@ -498,9 +507,9 @@ public class LynStopActivity extends AppCompatActivity implements
                                 });
                     }
                     LatLngBounds bounds = builder.build();
+                    cover.dismiss();
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
                     mGoogleMap.moveCamera(cu);
-                    locsetted = true;
                 }
 
                 @Override
@@ -509,6 +518,7 @@ public class LynStopActivity extends AppCompatActivity implements
                     Log.w("Oye", "Failed to read value.", error.toException());
                 }
             });
+            locsetted = true;
         }
     }
 

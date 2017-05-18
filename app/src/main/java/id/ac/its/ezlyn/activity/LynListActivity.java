@@ -110,6 +110,7 @@ public class LynListActivity extends AppCompatActivity  implements
     CardView cardlyn;
     @BindView(R.id.selesai)
     Button selesai;
+    ProgressDialog cover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +151,12 @@ public class LynListActivity extends AppCompatActivity  implements
                 Log.w("Oye", "Failed to read value.", error.toException());
             }
         });
+        cover = new ProgressDialog(this);
+        cover.setMessage("Memproses");
+        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        cover.setCancelable(false);
+        cover.setCanceledOnTouchOutside(false);
+        cover.show();
     }
 
     @OnClick(R.id.selesai)
@@ -424,9 +431,9 @@ public class LynListActivity extends AppCompatActivity  implements
                             }
                         }
                     LatLngBounds bounds = builder.build();
+                    cover.dismiss();
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
                     mGoogleMap.moveCamera(cu);
-                    locsetted = true;
                 }
 
                 @Override
@@ -435,6 +442,7 @@ public class LynListActivity extends AppCompatActivity  implements
                     Log.w("Oye", "Failed to read value.", error.toException());
                 }
             });
+            locsetted = true;
         }
     }
 
