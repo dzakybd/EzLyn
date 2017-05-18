@@ -67,9 +67,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.ac.its.ezlyn.R;
-import id.ac.its.ezlyn.Tutorial_fix;
 import id.ac.its.ezlyn.model.Halte;
-import id.ac.its.ezlyn.new_tab;
+import id.ac.its.ezlyn.tutorial_new;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements
     Button konfirmasi;
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
+    private Button tut;
 
 
     @Override
@@ -115,6 +115,17 @@ public class MainActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+
+        tut = (Button) findViewById(R.id.go_tutor);
+        tut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(MainActivity.this, act_just_tutorial.class);
+                Intent intent = new Intent(MainActivity.this, tutorial_new.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
 
@@ -395,11 +406,5 @@ public class MainActivity extends AppCompatActivity implements
         });
         final AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    public void GoTutor(){
-        Intent intent = new Intent(MainActivity.this, new_tab.class);
-        startActivity(intent);
-        finish();
     }
 }
