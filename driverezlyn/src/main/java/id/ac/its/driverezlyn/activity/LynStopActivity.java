@@ -96,9 +96,9 @@ public class LynStopActivity extends AppCompatActivity implements
     DatabaseReference databaseHalte,databaseLyn;
     Polyline polyline;
     TextView jumlah, nama, jarak;
-    PolylineOptions[] map_poli = new PolylineOptions[10];
-    String[] map_distance = new String[10];
-    String[] map_duration = new String[10];
+    PolylineOptions[] map_poli = new PolylineOptions[100];
+    String[] map_distance = new String[100];
+    String[] map_duration = new String[100];
     Handler mHandler;
     Runnable mAnimation;
     @BindView(R.id.toolbar_title)

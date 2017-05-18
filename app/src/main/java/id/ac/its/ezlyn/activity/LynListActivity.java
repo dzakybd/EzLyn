@@ -86,9 +86,9 @@ public class LynListActivity extends AppCompatActivity  implements
     DatabaseReference databaseHalte,databaseLyn;
     Polyline polyline;
     TextView full, nama, jarak;
-    PolylineOptions[] map_poli = new PolylineOptions[10];
-    String[] map_distance = new String[10];
-    String[] map_duration = new String[10];
+    PolylineOptions[] map_poli = new PolylineOptions[100];
+    String[] map_distance = new String[100];
+    String[] map_duration = new String[100];
     Marker[] marker_lyns;
     Handler mHandler;
     Runnable mAnimation;
