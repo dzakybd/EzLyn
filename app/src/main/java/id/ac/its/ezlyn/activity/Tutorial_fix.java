@@ -1,9 +1,8 @@
-package id.ac.its.ezlyn;
+package id.ac.its.ezlyn.activity;
 
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,9 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class new_tab extends ActionBarActivity {
+import id.ac.its.ezlyn.R;
+
+public class Tutorial_fix extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,7 +42,7 @@ public class new_tab extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_tab);
+        setContentView(R.layout.activity_tutorial_fix);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +70,7 @@ public class new_tab extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_new_tab, menu);
+        getMenuInflater().inflate(R.menu.menu_tutorial_fix, menu);
         return true;
     }
 
@@ -91,19 +93,20 @@ public class new_tab extends ActionBarActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+        private Drawable[] img;
+        private ImageView imageView;
+        private int now;
+        //private int id = getResources().getIdentifier("id.ac.its.ezlyn:drawable/" + StringGenerated, null, null);
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -115,9 +118,32 @@ public class new_tab extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_new_tab, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_tutorial_fix, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            /*
+            now = getArguments().getInt(ARG_SECTION_NUMBER);
+
+            imageView = (ImageView)rootView.findViewById(R.id.tutorial_imgView);
+            if(now == 1) {
+                //imageView.setImageResource(R.drawable.tutor_sub_1);
+//            rootView.setBackground(R.drawable.tutor_sub_1);
+                rootView.setBackgroundResource(R.drawable.tutor_sub_1);
+            }
+            else if(now == 2){
+                //imageView.setImageResource(R.drawable.tutor_sub_2);
+                rootView.setBackgroundResource(R.drawable.tutor_sub_2);
+            }
+            else if(now == 3){
+                //imageView.setImageResource(R.drawable.tutor_sub_3);
+                rootView.setBackgroundResource(R.drawable.tutor_sub_3);
+            }
+            else if(now == 4){
+                //imageView.setImageResource(R.drawable.tutor_sub_4);
+                rootView.setBackgroundResource(R.drawable.tutor_sub_4);
+            }
+*/
             return rootView;
         }
     }
@@ -142,7 +168,7 @@ public class new_tab extends ActionBarActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
 
         @Override
@@ -154,6 +180,8 @@ public class new_tab extends ActionBarActivity {
                     return "SECTION 2";
                 case 2:
                     return "SECTION 3";
+                case 3:
+                    return "SECTION 4";
             }
             return null;
         }
