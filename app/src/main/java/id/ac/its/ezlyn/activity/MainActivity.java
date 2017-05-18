@@ -113,8 +113,14 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        statusCheckInt();
-        statusCheckGPS();
+        if(statusCheckInt()&&statusCheckGPS()){
+            cover = new ProgressDialog(this);
+            cover.setMessage("Memproses");
+            cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            cover.setCancelable(false);
+            cover.setCanceledOnTouchOutside(false);
+            cover.show();
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryText, null));
@@ -122,12 +128,6 @@ public class MainActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        cover = new ProgressDialog(this);
-        cover.setMessage("Memproses");
-        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        cover.setCancelable(false);
-        cover.setCanceledOnTouchOutside(false);
-        cover.show();
     }
 
 
@@ -395,20 +395,20 @@ public class MainActivity extends AppCompatActivity implements
             locsetted = true;
         }
     }
-
-    public void statusCheckInt() {
+    public boolean statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()) {
-            } else buildAlertMessageNoInt();
-        } else buildAlertMessageNoInt();
+            if (connectivity.getActiveNetworkInfo().isConnected()){return true;}
+            else {buildAlertMessageNoInt();return false;}
+        }else {buildAlertMessageNoInt();return false;}
     }
 
-    public void statusCheckGPS() {
+    public boolean statusCheckGPS() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
-        }
+            return false;
+        }else return true;
     }
 
     private void buildAlertMessageNoGps() {

@@ -56,7 +56,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -96,9 +95,6 @@ public class LynStopActivity extends AppCompatActivity implements
     DatabaseReference databaseHalte,databaseLyn;
     Polyline polyline;
     TextView jumlah, nama, jarak;
-    PolylineOptions[] map_poli = new PolylineOptions[100];
-    String[] map_distance = new String[100];
-    String[] map_duration = new String[100];
     Handler mHandler;
     Runnable mAnimation;
     @BindView(R.id.toolbar_title)
@@ -127,8 +123,14 @@ public class LynStopActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyn_stop);
         ButterKnife.bind(this);
-        statusCheckInt();
-        statusCheckGPS();
+        if(statusCheckInt()&&statusCheckGPS()){
+            cover = new ProgressDialog(this);
+            cover.setMessage("Memproses");
+            cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            cover.setCancelable(false);
+            cover.setCanceledOnTouchOutside(false);
+            cover.show();
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryText, null));
@@ -170,12 +172,6 @@ public class LynStopActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        cover = new ProgressDialog(this);
-        cover.setMessage("Memproses");
-        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        cover.setCancelable(false);
-        cover.setCanceledOnTouchOutside(false);
-        cover.show();
     }
 
     @Override
@@ -339,13 +335,37 @@ public class LynStopActivity extends AppCompatActivity implements
                             halte=h;
                             jumlah.setText(h.getWaiting() + " penunggu");
                             jumlahHalte.setText(h.getWaiting() + " orang");
-                            jarak.setText(map_distance[index]);
-                            jarakHalte.setText(map_distance[index]);
-                            waktuHalte.setText(map_duration[index]);
-                            if (polyline != null) {
-                                polyline.remove();
-                            }
-                            polyline = mGoogleMap.addPolyline(map_poli[index]);
+                            GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
+                                    .from(new LatLng(myloc.getLatitude(), myloc.getLongitude()))
+                                    .to(new LatLng(halte.getLat(), halte.getLng()))
+                                    .unit(Unit.IMPERIAL)
+                                    .transitMode(TransportMode.WALKING)
+                                    .avoid(AvoidType.TOLLS)
+                                    .avoid(AvoidType.FERRIES)
+                                    .execute(new DirectionCallback() {
+                                        @Override
+                                        public void onDirectionSuccess(Direction direction, String rawBody) {
+                                            if (direction.isOK()) {
+                                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                                jarak.setText(direction.getRouteList().get(0).getLegList().get(0).getDistance().getText());
+                                                jarakHalte.setText(direction.getRouteList().get(0).getLegList().get(0).getDistance().getText());
+                                                waktuHalte.setText(direction.getRouteList().get(0).getLegList().get(0).getDuration().getText());
+                                                if (polyline != null) {
+                                                    polyline.remove();
+                                                }
+                                                polyline = mGoogleMap.addPolyline(DirectionConverter.createPolyline(LynStopActivity.this, directionPositionList, 5, ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null)));
+                                            } else {
+                                                Log.d("mapse", rawBody);
+                                                // Do something
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onDirectionFailure(Throwable t) {
+                                            Log.d("mapse", t.toString());
+                                        }
+                                    });
+
                             break;
                         }
                     }
@@ -479,32 +499,6 @@ public class LynStopActivity extends AppCompatActivity implements
                         markerOptions.title(halte.getName());
                         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
                         mGoogleMap.addMarker(markerOptions);
-                        GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
-                                .from(new LatLng(myloc.getLatitude(), myloc.getLongitude()))
-                                .to(halteloc)
-                                .unit(Unit.IMPERIAL)
-                                .transitMode(TransportMode.WALKING)
-                                .avoid(AvoidType.TOLLS)
-                                .avoid(AvoidType.FERRIES)
-                                .execute(new DirectionCallback() {
-                                    @Override
-                                    public void onDirectionSuccess(Direction direction, String rawBody) {
-                                        if (direction.isOK()) {
-                                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                                            map_duration[index] = direction.getRouteList().get(0).getLegList().get(0).getDuration().getText();
-                                            map_distance[index] = direction.getRouteList().get(0).getLegList().get(0).getDistance().getText();
-                                            map_poli[index] = DirectionConverter.createPolyline(LynStopActivity.this, directionPositionList, 5, ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
-                                        } else {
-                                            Log.d("mapse", rawBody);
-                                            // Do something
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onDirectionFailure(Throwable t) {
-                                        Log.d("mapse", t.toString());
-                                    }
-                                });
                     }
                     LatLngBounds bounds = builder.build();
                     cover.dismiss();
@@ -522,19 +516,20 @@ public class LynStopActivity extends AppCompatActivity implements
         }
     }
 
-    public void statusCheckInt() {
+    public boolean statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()){}
-            else buildAlertMessageNoInt();
-        }else buildAlertMessageNoInt();
+            if (connectivity.getActiveNetworkInfo().isConnected()){return true;}
+            else {buildAlertMessageNoInt();return false;}
+        }else {buildAlertMessageNoInt();return false;}
     }
 
-    public void statusCheckGPS() {
+    public boolean statusCheckGPS() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
-        }
+            return false;
+        }else return true;
     }
 
     private void buildAlertMessageNoGps() {

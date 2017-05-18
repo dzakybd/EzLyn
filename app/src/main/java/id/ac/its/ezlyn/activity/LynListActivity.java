@@ -2,16 +2,23 @@ package id.ac.its.ezlyn.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -117,6 +124,14 @@ public class LynListActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyn_list);
         ButterKnife.bind(this);
+        if(statusCheckInt()&&statusCheckGPS()){
+            cover = new ProgressDialog(this);
+            cover.setMessage("Memproses");
+            cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            cover.setCancelable(false);
+            cover.setCanceledOnTouchOutside(false);
+            cover.show();
+        }
         halte = Parcels.unwrap(getIntent().getParcelableExtra("halte"));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -155,13 +170,7 @@ public class LynListActivity extends AppCompatActivity implements
                 Log.w("Oye", "Failed to read value.", error.toException());
             }
         });
-        //
-        cover = new ProgressDialog(this);
-        cover.setMessage("Memproses");
-        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        cover.setCancelable(false);
-        cover.setCanceledOnTouchOutside(false);
-        cover.show();
+
     }
 
     @OnClick(R.id.selesai)
@@ -460,5 +469,53 @@ public class LynListActivity extends AppCompatActivity implements
         }
         return index;
     }
+    public boolean statusCheckInt() {
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity.getActiveNetworkInfo() != null) {
+            if (connectivity.getActiveNetworkInfo().isConnected()){return true;}
+            else {buildAlertMessageNoInt();return false;}
+        }else {buildAlertMessageNoInt();return false;}
+    }
 
+    public boolean statusCheckGPS() {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+            return false;
+        }else return true;
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Mohon aktifkan GPS Anda")
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void buildAlertMessageNoInt() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Mohon aktifkan Internet Anda")
+                .setCancelable(false)
+                .setPositiveButton("Data", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        Intent intent = new Intent();
+                        intent.setComponent(new ComponentName(
+                                "com.android.settings",
+                                "com.android.settings.Settings$DataUsageSummaryActivity"));
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("Wifi", new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, final int id) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 }
