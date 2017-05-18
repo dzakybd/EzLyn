@@ -36,8 +36,7 @@
         </activity>
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.LynListActivity" />
-        <activity android:name=".activity.Tutorial_fix" />
-        <activity android:name=".activity.new_tab"/>
+		<activity android:name=".tutorial_new" />
     </application>
 
 </manifest>
