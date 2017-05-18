@@ -56,10 +56,6 @@ public class Splashscreen extends AppCompatActivity {
                         databaseLyn.child(lyn.getPlate()).setValue(lyn);
                         lyn = new Lyn("L 23 B", 6000, true, true, -7.280443, 112.781068);
                         databaseLyn.child(lyn.getPlate()).setValue(lyn);
-                        lyn = new Lyn("L 34 C", 7000, false, true, -7.276655, 112.786196);
-                        databaseLyn.child(lyn.getPlate()).setValue(lyn);
-                        lyn = new Lyn("L 45 D", 8000, true, true, -7.277549, 112.780939);
-                        databaseLyn.child(lyn.getPlate()).setValue(lyn);
                     }
                 }
 
