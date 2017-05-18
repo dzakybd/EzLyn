@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -23,6 +24,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
@@ -58,6 +61,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import org.parceler.Parcels;
 
@@ -117,17 +122,6 @@ public class MainActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-
-        tut = (Button) findViewById(R.id.go_tutor);
-        tut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(MainActivity.this, act_just_tutorial.class);
-                Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
-                startActivity(intent);
-//                finish();
-            }
-        });
         cover = new ProgressDialog(this);
         cover.setMessage("Memproses");
         cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -449,5 +443,30 @@ public class MainActivity extends AppCompatActivity implements
         });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tutorial, menu);
+        menu.findItem(R.id.tutorial).setIcon(
+                new IconicsDrawable(this)
+                        .icon(GoogleMaterial.Icon.gmd_info)
+                        .color(Color.BLACK)
+                        .actionBar()
+        );
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.tutorial:
+                Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

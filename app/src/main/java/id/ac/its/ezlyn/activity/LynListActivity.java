@@ -126,31 +126,33 @@ public class LynListActivity extends AppCompatActivity  implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        databaseLyn.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(locsetted){
-                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                        lyn = dsp.getValue(Lyn.class);
-                        if(lyn.isStatus()){
-                            final int index = lyns.indexOf(lyn);
-                            if(marker_lyns[index]!=null)marker_lyns[index].remove();
-                            markerOptions = new MarkerOptions();
-                            LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
-                            markerOptions.position(lynloc);
-                            markerOptions.title(lyn.getPlate());
-                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
-                            marker_lyns[index]=mGoogleMap.addMarker(markerOptions);
-                        }
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("Oye", "Failed to read value.", error.toException());
-            }
-        });
+//        databaseLyn.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.d("locsetted",locsetted+"");
+//                if(locsetted){
+//                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+//                        lyn = dsp.getValue(Lyn.class);
+//                        if(lyn.isStatus()){
+//                            final int index = lyns.indexOf(lyn);
+//                            Log.d("indexnn",index+"");
+//                            if(marker_lyns[index]!=null)marker_lyns[index].remove();
+//                            markerOptions = new MarkerOptions();
+//                            LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
+//                            markerOptions.position(lynloc);
+//                            markerOptions.title(lyn.getPlate());
+//                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
+//                            marker_lyns[index]=mGoogleMap.addMarker(markerOptions);
+//                        }
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w("Oye", "Failed to read value.", error.toException());
+//            }
+//        });
         cover = new ProgressDialog(this);
         cover.setMessage("Memproses");
         cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -395,6 +397,7 @@ public class LynListActivity extends AppCompatActivity  implements
                         if(lyn.isStatus()){
                             lyns.add(lyn);
                             final int index = lyns.indexOf(lyn);
+                            Log.d("AS",index+"");
                             markerOptions = new MarkerOptions();
                             LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
                             markerOptions.position(lynloc);
