@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements
                 //Intent intent = new Intent(MainActivity.this, act_just_tutorial.class);
                 Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
         cover = new ProgressDialog(this);
