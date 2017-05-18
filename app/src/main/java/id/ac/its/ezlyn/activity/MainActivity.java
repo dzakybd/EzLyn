@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements
     TextView toolbarTitle;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements
                 for (Halte h : haltes) {
                     if (h.getName().contentEquals(marker.getTitle())) {
                         int index = haltes.indexOf(h);
-                        halte=h;
+                        halte = h;
                         jumlah.setText(h.getWaiting() + " penunggu");
                         jarak.setText(map_distance[index]);
                         if (polyline != null) {
@@ -205,14 +204,14 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int waiting = dataSnapshot.getValue(Halte.class).getWaiting();
-                        waiting=waiting+1;
+                        waiting = waiting + 1;
                         databaseHalte.child(halte.getName()).child("waiting").setValue(waiting);
                     }
 
-                     @Override
-                     public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                     }
+                    }
                 });
                 Intent intent = new Intent(MainActivity.this, LynListActivity.class);
                 intent.putExtra("halte", Parcels.wrap(halte));
@@ -352,9 +351,9 @@ public class MainActivity extends AppCompatActivity implements
     public void statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()){}
-            else buildAlertMessageNoInt();
-        }else buildAlertMessageNoInt();
+            if (connectivity.getActiveNetworkInfo().isConnected()) {
+            } else buildAlertMessageNoInt();
+        } else buildAlertMessageNoInt();
     }
 
     public void statusCheckGPS() {
