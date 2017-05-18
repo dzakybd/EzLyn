@@ -66,7 +66,7 @@ import id.ac.its.ezlyn.R;
 import id.ac.its.ezlyn.model.Halte;
 import id.ac.its.ezlyn.model.Lyn;
 
-public class LynListActivity extends AppCompatActivity  implements
+public class LynListActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -82,14 +82,14 @@ public class LynListActivity extends AppCompatActivity  implements
     Lyn lyn;
     List<Lyn> lyns;
     boolean locsetted = false;
-    int jumlahlyn=0;
-    DatabaseReference databaseHalte,databaseLyn;
+    int jumlahlyn = 0;
+    DatabaseReference databaseHalte, databaseLyn;
     Polyline polyline;
     TextView full, nama, jarak;
     PolylineOptions[] map_poli = new PolylineOptions[100];
     String[] map_distance = new String[100];
     String[] map_duration = new String[100];
-    Marker[] marker_lyns;
+    Marker[] marker_lyns = new Marker[100];
     Handler mHandler;
     Runnable mAnimation;
     @BindView(R.id.toolbar_title)
@@ -126,33 +126,36 @@ public class LynListActivity extends AppCompatActivity  implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-//        databaseLyn.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d("locsetted",locsetted+"");
-//                if(locsetted){
-//                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-//                        lyn = dsp.getValue(Lyn.class);
-//                        if(lyn.isStatus()){
-//                            final int index = lyns.indexOf(lyn);
-//                            Log.d("indexnn",index+"");
-//                            if(marker_lyns[index]!=null)marker_lyns[index].remove();
-//                            markerOptions = new MarkerOptions();
-//                            LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
-//                            markerOptions.position(lynloc);
-//                            markerOptions.title(lyn.getPlate());
-//                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
-//                            marker_lyns[index]=mGoogleMap.addMarker(markerOptions);
-//                        }
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // Failed to read value
-//                Log.w("Oye", "Failed to read value.", error.toException());
-//            }
-//        });
+        //
+        databaseLyn.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("locsetted", locsetted + "");
+                if (locsetted) {
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        lyn = dsp.getValue(Lyn.class);
+                        if (lyn.isStatus()) {
+                            int index = getIndex(lyn);
+                            Log.d("indexnn", String.valueOf(index) + "");
+                            if (marker_lyns[index] != null) marker_lyns[index].remove();
+                            markerOptions = new MarkerOptions();
+                            LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
+                            markerOptions.position(lynloc);
+                            markerOptions.title(lyn.getPlate());
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
+                            marker_lyns[index] = mGoogleMap.addMarker(markerOptions);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Oye", "Failed to read value.", error.toException());
+            }
+        });
+        //
         cover = new ProgressDialog(this);
         cover.setMessage("Memproses");
         cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -167,7 +170,7 @@ public class LynListActivity extends AppCompatActivity  implements
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int waiting = dataSnapshot.getValue(Halte.class).getWaiting();
-                waiting=waiting-1;
+                waiting = waiting - 1;
                 databaseHalte.child(halte.getName()).child("waiting").setValue(waiting);
             }
 
@@ -217,48 +220,47 @@ public class LynListActivity extends AppCompatActivity  implements
                 jarak = (TextView) v.findViewById(R.id.jarak);
                 full = (TextView) v.findViewById(R.id.full);
                 nama.setText(marker.getTitle());
-                if(marker.getTitle().contentEquals(halte.getName())){
+                if (marker.getTitle().contentEquals(halte.getName())) {
                     jarak.setVisibility(View.GONE);
                     full.setVisibility(View.GONE);
                     cardlyn.setVisibility(View.GONE);
                     if (polyline != null) {
                         polyline.remove();
                     }
-                }else{
+                } else {
                     tvLynDestination.setCompoundDrawables(
                             new IconicsDrawable(LynListActivity.this)
-                            .icon(GoogleMaterial.Icon.gmd_directions_car)
-                            .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
-                            .actionBar(),
-                            null, null, null );
+                                    .icon(GoogleMaterial.Icon.gmd_directions_car)
+                                    .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
+                                    .actionBar(),
+                            null, null, null);
                     tvLynEta.setCompoundDrawables(
                             new IconicsDrawable(LynListActivity.this)
                                     .icon(GoogleMaterial.Icon.gmd_av_timer)
                                     .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
                                     .actionBar(),
-                            null, null, null );
+                            null, null, null);
                     tvLynFee.setCompoundDrawables(
                             new IconicsDrawable(LynListActivity.this)
                                     .icon(GoogleMaterial.Icon.gmd_attach_money)
                                     .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
                                     .actionBar(),
-                            null, null, null );
+                            null, null, null);
                     tvLynStatus.setCompoundDrawables(
                             new IconicsDrawable(LynListActivity.this)
                                     .icon(GoogleMaterial.Icon.gmd_group)
                                     .color(ResourcesCompat.getColor(getResources(), R.color.colorSecondaryText, null))
                                     .actionBar(),
-                            null, null, null );
+                            null, null, null);
                     cardlyn.setVisibility(View.VISIBLE);
                     for (Lyn h : lyns) {
                         if (h.getPlate().contentEquals(marker.getTitle())) {
                             int index = lyns.indexOf(h);
-                            lyn=h;
-                            if(h.isFull()){
+                            lyn = h;
+                            if (h.isFull()) {
                                 full.setText("Penuh");
                                 tvLynStatus.setText("Penuh");
-                            }
-                            else{
+                            } else {
                                 full.setText("Tersedia");
                                 tvLynStatus.setText("Tersedia");
                             }
@@ -266,7 +268,7 @@ public class LynListActivity extends AppCompatActivity  implements
                             tvLynDestination.setText(map_distance[index]);
                             jarak.setText(map_distance[index]);
                             tvLynEta.setText(map_duration[index]);
-                            tvLynFee.setText("Rp "+h.getPrice());
+                            tvLynFee.setText("Rp " + h.getPrice());
                             if (polyline != null) {
                                 polyline.remove();
                             }
@@ -379,32 +381,32 @@ public class LynListActivity extends AppCompatActivity  implements
             final LatLngBounds.Builder builder = new LatLngBounds.Builder();
             lyns = new ArrayList<>();
             markerOptions = new MarkerOptions();
-            final LatLng halteloc=new LatLng(halte.getLat(), halte.getLng());
+            final LatLng halteloc = new LatLng(halte.getLat(), halte.getLng());
             builder.include(halteloc);
             markerOptions.position(halteloc);
             markerOptions.title(halte.getName());
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
-            marker_h=mGoogleMap.addMarker(markerOptions);
+            marker_h = mGoogleMap.addMarker(markerOptions);
             databaseLyn.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                        jumlahlyn++;
-                    }
-                    marker_lyns = new Marker[jumlahlyn+1];
+//                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+//                        jumlahlyn++;
+//                    }
+//                    marker_lyns = new Marker[jumlahlyn + 1];
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                         lyn = dsp.getValue(Lyn.class);
-                        if(lyn.isStatus()){
+                        if (lyn.isStatus()) {
                             lyns.add(lyn);
-                            final int index = lyns.indexOf(lyn);
-                            Log.d("AS",index+"");
+                            final int index = getIndex(lyn);
+                            Log.d("bawah", index + "");
                             markerOptions = new MarkerOptions();
                             LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
                             markerOptions.position(lynloc);
                             builder.include(lynloc);
                             markerOptions.title(lyn.getPlate());
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_angkot));
-                            marker_lyns[index]=mGoogleMap.addMarker(markerOptions);
+                            marker_lyns[index] = mGoogleMap.addMarker(markerOptions);
                             GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
                                     .from(halteloc)
                                     .to(lynloc)
@@ -431,8 +433,8 @@ public class LynListActivity extends AppCompatActivity  implements
                                             Log.d("mapse", t.toString());
                                         }
                                     });
-                            }
                         }
+                    }
                     LatLngBounds bounds = builder.build();
                     cover.dismiss();
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
@@ -447,6 +449,16 @@ public class LynListActivity extends AppCompatActivity  implements
             });
             locsetted = true;
         }
+    }
+
+    private int getIndex(Lyn lyn){
+        int index = 0;
+        for (Lyn l : lyns) {
+            if (l.getPlate() == lyn.getPlate()) {
+                index = lyns.indexOf(l);
+            }
+        }
+        return index;
     }
 
 }
