@@ -21,13 +21,18 @@ public class TutorialActivity extends AppIntro {
         super.onCreate(savedInstanceState);
 
         int bgColor =  Color.parseColor("#ffdc5a");
-        int textColor = Color.parseColor("#212121");
+        int blackColor = Color.parseColor("#212121");
+        int black2Color = Color.parseColor("#424242");
 
-        addSlide(AppIntroFragment.newInstance("Pilih halte", "Silakan memilih salah satu halte yang paling dekat dengan anda, lalu tekan logo halte tersebut", R.drawable.tutor_sub_1, bgColor, textColor, textColor));
-        addSlide(AppIntroFragment.newInstance("Konfirmasi menunggu", "Tekan deskripsi helte tersebut untuk konfirmasi kalau anda akan menunggu angkot di halte tersebut", R.drawable.tutor_sub_2, bgColor, textColor, textColor));
-        addSlide(AppIntroFragment.newInstance("Angkot tersedia", "Sistem akan menampilkan beberapa angkot yang tersedia", R.drawable.tutor_sub_3, bgColor, textColor, textColor));
-        addSlide(AppIntroFragment.newInstance("Langkah terakhir", "Sistem akan menampilkan deskripsi dari angkot yang sudah anda pilih.\n Lalu tekan Selesai", R.drawable.tutor_sub_4, bgColor, textColor, textColor));
+        addSlide(AppIntroFragment.newInstance("Pilih halte", "Silakan memilih salah satu halte yang paling dekat dengan anda, lalu tekan logo halte tersebut", R.drawable.tutor_sub_1, bgColor, blackColor, blackColor));
+        addSlide(AppIntroFragment.newInstance("Konfirmasi menunggu", "Tekan deskripsi helte tersebut untuk konfirmasi kalau anda akan menunggu angkot di halte tersebut", R.drawable.tutor_sub_2, bgColor, blackColor, blackColor));
+        addSlide(AppIntroFragment.newInstance("Angkot tersedia", "Sistem akan menampilkan beberapa angkot yang tersedia", R.drawable.tutor_sub_3, bgColor, blackColor, blackColor));
+        addSlide(AppIntroFragment.newInstance("Langkah terakhir", "Sistem akan menampilkan deskripsi dari angkot yang sudah anda pilih.\n Lalu tekan Selesai", R.drawable.tutor_sub_4, bgColor, blackColor, blackColor));
+
         showSkipButton(false);
+        setColorDoneText(blackColor);
+        setIndicatorColor(blackColor, black2Color);
+        setNextArrowColor(blackColor);
     }
 
     @Override
