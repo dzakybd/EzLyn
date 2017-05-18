@@ -67,7 +67,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.ac.its.ezlyn.R;
+import id.ac.its.ezlyn.Tutorial_fix;
 import id.ac.its.ezlyn.model.Halte;
+import id.ac.its.ezlyn.new_tab;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -394,5 +396,11 @@ public class MainActivity extends AppCompatActivity implements
         });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void GoTutor(){
+        Intent intent = new Intent(MainActivity.this, new_tab.class);
+        startActivity(intent);
+        finish();
     }
 }
