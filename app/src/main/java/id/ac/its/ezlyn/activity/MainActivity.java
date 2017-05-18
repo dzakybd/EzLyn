@@ -68,6 +68,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.ac.its.ezlyn.R;
+import id.ac.its.ezlyn.TutorialActivity;
 import id.ac.its.ezlyn.model.Halte;
 import id.ac.its.ezlyn.tutorial_new;
 public class MainActivity extends AppCompatActivity implements
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 //Intent intent = new Intent(MainActivity.this, act_just_tutorial.class);
-                Intent intent = new Intent(MainActivity.this, tutorial_new.class);
+                Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
                 startActivity(intent);
                 finish();
             }
