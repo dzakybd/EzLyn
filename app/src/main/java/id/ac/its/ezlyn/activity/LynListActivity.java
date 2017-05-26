@@ -118,20 +118,19 @@ public class LynListActivity extends AppCompatActivity implements
     @BindView(R.id.selesai)
     Button selesai;
     ProgressDialog cover;
+    int checked=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyn_list);
         ButterKnife.bind(this);
-        if(statusCheckInt()&&statusCheckGPS()){
-            cover = new ProgressDialog(this);
-            cover.setMessage("Memproses");
-            cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            cover.setCancelable(false);
-            cover.setCanceledOnTouchOutside(false);
-            cover.show();
-        }
+        cover = new ProgressDialog(this);
+        cover.setMessage("Memproses");
+        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        cover.setCancelable(false);
+        cover.setCanceledOnTouchOutside(false);
+        status();
         halte = Parcels.unwrap(getIntent().getParcelableExtra("halte"));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -145,14 +144,14 @@ public class LynListActivity extends AppCompatActivity implements
         databaseLyn.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("locsetted", locsetted + "");
-                if (locsetted) {
+                if (locsetted&&lyns.size()>0) {
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                         lyn = dsp.getValue(Lyn.class);
-                        if (lyn.isStatus()) {
+
                             int index = getIndex(lyn);
-                            Log.d("indexnn", String.valueOf(index) + "");
+                            lyns.set(index,lyn);
                             if (marker_lyns[index] != null) marker_lyns[index].remove();
+                        if (lyn.isStatus()) {
                             markerOptions = new MarkerOptions();
                             LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
                             markerOptions.position(lynloc);
@@ -404,11 +403,10 @@ public class LynListActivity extends AppCompatActivity implements
 //                    }
 //                    marker_lyns = new Marker[jumlahlyn + 1];
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                        lyn = dsp.getValue(Lyn.class);
-                        if (lyn.isStatus()) {
+                            lyn = dsp.getValue(Lyn.class);
                             lyns.add(lyn);
                             final int index = getIndex(lyn);
-                            Log.d("bawah", index + "");
+                        if (lyn.isStatus()) {
                             markerOptions = new MarkerOptions();
                             LatLng lynloc = new LatLng(lyn.getLat(), lyn.getLng());
                             markerOptions.position(lynloc);
@@ -469,20 +467,24 @@ public class LynListActivity extends AppCompatActivity implements
         }
         return index;
     }
-    public boolean statusCheckInt() {
+    public void statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()){return true;}
-            else {buildAlertMessageNoInt();return false;}
-        }else {buildAlertMessageNoInt();return false;}
+            if (connectivity.getActiveNetworkInfo().isConnected()) checked++;
+            else buildAlertMessageNoInt();
+        }else buildAlertMessageNoInt();
     }
 
-    public boolean statusCheckGPS() {
+    public void statusCheckGPS() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            buildAlertMessageNoGps();
-            return false;
-        }else return true;
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) buildAlertMessageNoGps();
+        else checked++;
+    }
+
+    public void status(){
+        statusCheckInt();
+        statusCheckGPS();
+        if(checked==2)cover.show();
     }
 
     private void buildAlertMessageNoGps() {

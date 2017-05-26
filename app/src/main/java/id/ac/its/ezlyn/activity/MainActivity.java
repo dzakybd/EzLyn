@@ -75,6 +75,7 @@ import butterknife.OnClick;
 import id.ac.its.ezlyn.R;
 import id.ac.its.ezlyn.TutorialActivity;
 import id.ac.its.ezlyn.model.Halte;
+
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
     Button konfirmasi;
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
-    private Button tut;
+    int checked=0;
 
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
@@ -113,14 +114,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        if(statusCheckInt()&&statusCheckGPS()){
-            cover = new ProgressDialog(this);
-            cover.setMessage("Memproses");
-            cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            cover.setCancelable(false);
-            cover.setCanceledOnTouchOutside(false);
-            cover.show();
-        }
+        haltes = new ArrayList<>();
+        cover = new ProgressDialog(this);
+        cover.setMessage("Memproses");
+        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        cover.setCancelable(false);
+        cover.setCanceledOnTouchOutside(false);
+        status();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryText, null));
@@ -128,6 +128,22 @@ public class MainActivity extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+        databaseHalte.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (locsetted&&haltes.size()>0) {
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()){
+                        Halte ds = dsp.getValue(Halte.class);
+                        int index =getIndex(ds);
+                        haltes.set(index,ds);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
 
@@ -156,9 +172,9 @@ public class MainActivity extends AppCompatActivity implements
                 nama.setText(marker.getTitle());
                 for (Halte h : haltes) {
                     if (h.getName().contentEquals(marker.getTitle())) {
-                        int index = haltes.indexOf(h);
+                        final int index = getIndex(h);
                         halte = h;
-                        jumlah.setText(h.getWaiting() + " penunggu");
+                        jumlah.setText(halte.getWaiting() + " penunggu");
                         jarak.setText(map_distance[index]);
                         if (polyline != null) {
                             polyline.remove();
@@ -333,19 +349,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("saas","change");
         myloc = location;
         if (!locsetted) {
             final LatLngBounds.Builder builder = new LatLngBounds.Builder();
             builder.include(new LatLng(myloc.getLatitude(), myloc.getLongitude()));
-            haltes = new ArrayList<>();
             databaseHalte.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                         halte = dsp.getValue(Halte.class);
                         haltes.add(halte);
-                        final int index = haltes.indexOf(halte);
+                        final int index = getIndex(halte);
                         markerOptions = new MarkerOptions();
                         LatLng halteloc = new LatLng(halte.getLat(), halte.getLng());
                         markerOptions.position(halteloc);
@@ -395,20 +409,24 @@ public class MainActivity extends AppCompatActivity implements
             locsetted = true;
         }
     }
-    public boolean statusCheckInt() {
+    public void statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()){return true;}
-            else {buildAlertMessageNoInt();return false;}
-        }else {buildAlertMessageNoInt();return false;}
+            if (connectivity.getActiveNetworkInfo().isConnected()) checked++;
+            else buildAlertMessageNoInt();
+        }else buildAlertMessageNoInt();
     }
 
-    public boolean statusCheckGPS() {
+    public void statusCheckGPS() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            buildAlertMessageNoGps();
-            return false;
-        }else return true;
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) buildAlertMessageNoGps();
+        else checked++;
+    }
+
+    public void status(){
+        statusCheckInt();
+        statusCheckGPS();
+        if(checked==2)cover.show();
     }
 
     private void buildAlertMessageNoGps() {
@@ -468,5 +486,15 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private int getIndex(Halte halte){
+        int index = 0;
+        for (Halte h : haltes) {
+            if (h.getName() == halte.getName()) {
+                index = haltes.indexOf(h);
+            }
+        }
+        return index;
     }
 }

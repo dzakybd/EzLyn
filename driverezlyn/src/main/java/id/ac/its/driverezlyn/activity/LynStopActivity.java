@@ -116,6 +116,7 @@ public class LynStopActivity extends AppCompatActivity implements
     @BindView(R.id.penuh)
     Button penuh;
     ProgressDialog progressDialog,cover;
+    int checked=0;
 
 
     @Override
@@ -123,14 +124,13 @@ public class LynStopActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyn_stop);
         ButterKnife.bind(this);
-        if(statusCheckInt()&&statusCheckGPS()){
-            cover = new ProgressDialog(this);
-            cover.setMessage("Memproses");
-            cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            cover.setCancelable(false);
-            cover.setCanceledOnTouchOutside(false);
-            cover.show();
-        }
+        haltes = new ArrayList<>();
+        cover = new ProgressDialog(this);
+        cover.setMessage("Memproses");
+        cover.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        cover.setCancelable(false);
+        cover.setCanceledOnTouchOutside(false);
+        status();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryText, null));
@@ -140,6 +140,7 @@ public class LynStopActivity extends AppCompatActivity implements
                 .setPrefsName("EzLyn")
                 .setUseDefaultSharedPreference(true)
                 .build();
+        databaseHalte = FirebaseDatabase.getInstance().getReference("halte");
         databaseLyn = FirebaseDatabase.getInstance().getReference("lyn");
         databaseLyn.child(Prefs.getString("plat","")).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -167,8 +168,22 @@ public class LynStopActivity extends AppCompatActivity implements
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        databaseHalte = FirebaseDatabase.getInstance().getReference("halte");
-        databaseLyn = FirebaseDatabase.getInstance().getReference("lyn");
+        databaseHalte.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (locsetted&&haltes.size()>0) {
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()){
+                        Halte ds = dsp.getValue(Halte.class);
+                        int index =getIndex(ds);
+                        haltes.set(index,ds);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         mapFrag = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -484,7 +499,6 @@ public class LynStopActivity extends AppCompatActivity implements
         if (!locsetted) {
             final LatLngBounds.Builder builder = new LatLngBounds.Builder();
             builder.include(new LatLng(myloc.getLatitude(), myloc.getLongitude()));
-            haltes = new ArrayList<>();
             databaseHalte.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -516,20 +530,24 @@ public class LynStopActivity extends AppCompatActivity implements
         }
     }
 
-    public boolean statusCheckInt() {
+    public void statusCheckInt() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity.getActiveNetworkInfo() != null) {
-            if (connectivity.getActiveNetworkInfo().isConnected()){return true;}
-            else {buildAlertMessageNoInt();return false;}
-        }else {buildAlertMessageNoInt();return false;}
+            if (connectivity.getActiveNetworkInfo().isConnected()) checked++;
+            else buildAlertMessageNoInt();
+        }else buildAlertMessageNoInt();
     }
 
-    public boolean statusCheckGPS() {
+    public void statusCheckGPS() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            buildAlertMessageNoGps();
-            return false;
-        }else return true;
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) buildAlertMessageNoGps();
+        else checked++;
+    }
+
+    public void status(){
+        statusCheckInt();
+        statusCheckGPS();
+        if(checked==2)cover.show();
     }
 
     private void buildAlertMessageNoGps() {
@@ -564,5 +582,15 @@ public class LynStopActivity extends AppCompatActivity implements
         });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private int getIndex(Halte halte){
+        int index = 0;
+        for (Halte h : haltes) {
+            if (h.getName() == halte.getName()) {
+                index = haltes.indexOf(h);
+            }
+        }
+        return index;
     }
 }
