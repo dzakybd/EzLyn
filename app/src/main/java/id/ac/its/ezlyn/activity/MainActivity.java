@@ -34,7 +34,6 @@ import android.widget.TextView;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.constant.Unit;
 import com.akexorcist.googledirection.model.Direction;
@@ -365,15 +364,13 @@ public class MainActivity extends AppCompatActivity implements
                         markerOptions.position(halteloc);
                         builder.include(halteloc);
                         markerOptions.title(halte.getName());
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte_k));
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_halte));
                         mGoogleMap.addMarker(markerOptions);
                         GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
                                 .from(new LatLng(myloc.getLatitude(), myloc.getLongitude()))
                                 .to(halteloc)
-                                .unit(Unit.IMPERIAL)
+                                .unit(Unit.METRIC)
                                 .transitMode(TransportMode.WALKING)
-                                .avoid(AvoidType.TOLLS)
-                                .avoid(AvoidType.FERRIES)
                                 .execute(new DirectionCallback() {
                                     @Override
                                     public void onDirectionSuccess(Direction direction, String rawBody) {

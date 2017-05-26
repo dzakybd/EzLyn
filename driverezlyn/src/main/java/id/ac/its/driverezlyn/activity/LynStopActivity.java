@@ -35,7 +35,6 @@ import android.widget.TextView;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.constant.Unit;
 import com.akexorcist.googledirection.model.Direction;
@@ -117,6 +116,7 @@ public class LynStopActivity extends AppCompatActivity implements
     Button penuh;
     ProgressDialog progressDialog,cover;
     int checked=0;
+    String distemp;
 
 
     @Override
@@ -324,6 +324,8 @@ public class LynStopActivity extends AppCompatActivity implements
                         polyline.remove();
                     }
                 }else{
+                    jarak.setVisibility(View.VISIBLE);
+                    jumlah.setVisibility(View.VISIBLE);
                     namaHalte.setText(marker.getTitle());
                     jarakHalte.setCompoundDrawables(
                             new IconicsDrawable(LynStopActivity.this)
@@ -346,24 +348,21 @@ public class LynStopActivity extends AppCompatActivity implements
                     cardhalte.setVisibility(View.VISIBLE);
                     for (Halte h : haltes) {
                         if (h.getName().contentEquals(marker.getTitle())) {
-                            int index = haltes.indexOf(h);
                             halte=h;
                             jumlah.setText(h.getWaiting() + " penunggu");
                             jumlahHalte.setText(h.getWaiting() + " orang");
                             GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
                                     .from(new LatLng(myloc.getLatitude(), myloc.getLongitude()))
                                     .to(new LatLng(halte.getLat(), halte.getLng()))
-                                    .unit(Unit.IMPERIAL)
-                                    .transitMode(TransportMode.WALKING)
-                                    .avoid(AvoidType.TOLLS)
-                                    .avoid(AvoidType.FERRIES)
+                                    .unit(Unit.METRIC)
+                                    .transitMode(TransportMode.DRIVING)
                                     .execute(new DirectionCallback() {
                                         @Override
                                         public void onDirectionSuccess(Direction direction, String rawBody) {
                                             if (direction.isOK()) {
                                                 ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                                                jarak.setText(direction.getRouteList().get(0).getLegList().get(0).getDistance().getText());
-                                                jarakHalte.setText(direction.getRouteList().get(0).getLegList().get(0).getDistance().getText());
+                                                distemp=direction.getRouteList().get(0).getLegList().get(0).getDistance().getText();
+                                                jarakHalte.setText(distemp);
                                                 waktuHalte.setText(direction.getRouteList().get(0).getLegList().get(0).getDuration().getText());
                                                 if (polyline != null) {
                                                     polyline.remove();
@@ -380,7 +379,7 @@ public class LynStopActivity extends AppCompatActivity implements
                                             Log.d("mapse", t.toString());
                                         }
                                     });
-
+                                jarak.setText(distemp);
                             break;
                         }
                     }

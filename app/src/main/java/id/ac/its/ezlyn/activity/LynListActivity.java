@@ -31,7 +31,6 @@ import android.widget.TextView;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.constant.Unit;
 import com.akexorcist.googledirection.model.Direction;
@@ -417,10 +416,8 @@ public class LynListActivity extends AppCompatActivity implements
                             GoogleDirection.withServerKey(getResources().getString(R.string.googlegeneralkey))
                                     .from(halteloc)
                                     .to(lynloc)
-                                    .unit(Unit.IMPERIAL)
+                                    .unit(Unit.METRIC)
                                     .transitMode(TransportMode.DRIVING)
-                                    .avoid(AvoidType.TOLLS)
-                                    .avoid(AvoidType.FERRIES)
                                     .execute(new DirectionCallback() {
                                         @Override
                                         public void onDirectionSuccess(Direction direction, String rawBody) {
